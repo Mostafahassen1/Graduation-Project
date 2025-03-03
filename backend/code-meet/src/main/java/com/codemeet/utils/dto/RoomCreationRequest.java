@@ -16,6 +16,6 @@ public record RoomCreationRequest(
     @NotNull
     Integer creatorId,
     
-    byte[] roomPicture
+    String roomPictureUrl
 ) {
 }

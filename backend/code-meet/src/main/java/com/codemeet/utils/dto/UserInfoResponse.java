@@ -37,8 +37,17 @@ public record UserInfoResponse(
         flags = {}
     )
     String email,
-
-    byte[] profilePicture
+    
+    @NotNull
+    @NotBlank
+    @Length(max = 25)
+    @Pattern(
+        regexp = "",
+        flags = {}
+    )
+    String phoneNumber,
+    
+    String profilePictureUrl
 ) {
 
     public static UserInfoResponse of(User user) {
@@ -48,8 +57,8 @@ public record UserInfoResponse(
             user.getLastName(),
             user.getUsername(),
             user.getEmail(),
-
-            user.getProfilePicture()
+            user.getPhoneNumber(),
+            user.getProfilePictureUrl()
         );
     }
 }

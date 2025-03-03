@@ -28,14 +28,20 @@ public class Meeting {
     @Column(nullable = false)
     private MeetingStatus status;
 
-    public Meeting(String title,String description,User creator,Instant startsAt,MeetingStatus status)
-    {
-        this.title=title;
-        this.description=description;
-        this.creator=creator;
-        this.startsAt=startsAt;
-        this.status=status;
+    public Meeting(
+        String title,
+        String description,
+        User creator,
+        Instant startsAt,
+        MeetingStatus status
+    ) {
+        this.title = title;
+        this.description = description;
+        this.creator = creator;
+        this.startsAt = startsAt;
+        this.status = status;
     }
+
     public Meeting() {
     }
     

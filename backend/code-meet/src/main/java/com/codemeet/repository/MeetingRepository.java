@@ -1,7 +1,7 @@
 package com.codemeet.repository;
 
 import com.codemeet.entity.Meeting;
-import com.codemeet.utils.dto.MeetingResponse;
+import com.codemeet.utils.dto.MeetingInfoResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,22 +11,30 @@ import java.util.List;
 public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
 
 
-    @Query("""
-    select new com.codemeet.utils.dto.MeetingResponse(m.id, m.title, m.startsAt) 
-    from Meeting m
-    join Participant p on p.meeting = m
-    where p.user.id = :userId 
-    and m.status = MeetingStatus.FINISHED order by startsAt desc
-""")
-    List<MeetingResponse> getPreviousMeetings(Integer userId);
 
-    @Query("""
-    select new com.codemeet.utils.dto.MeetingResponse(m.id, m.title, m.startsAt) 
-    from Meeting m
-    join Participant p on p.meeting = m
-    where p.user.id = :userId 
-    and m.status = MeetingStatus.SCHEDULED order by startsAt desc
-""")
-    List<MeetingResponse> getScheduledMeetings(Integer userId);
+    @Query(
+        """
+        SELECT m
+        FROM Meeting m
+        JOIN Participant p
+        ON p.meeting = m
+        WHERE p.user.id = :userId
+        AND m.status = "FINISHED"
+        """
+    )
+    List<Meeting> getAllPrevious(Integer userId);
 
+
+
+    @Query(
+        """
+        SELECT m
+        FROM Meeting m
+        JOIN Participant p
+        ON p.meeting = m
+        WHERE p.user.id = :userId
+        and m.status = "SCHEDULED"
+        """
+    )
+    List<Meeting> getAllScheduled(Integer userId);
 }

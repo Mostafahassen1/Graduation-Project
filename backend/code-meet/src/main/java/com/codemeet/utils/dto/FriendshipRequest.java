@@ -2,9 +2,11 @@ package com.codemeet.utils.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-public record FriendshipRequest
-        (
-                @NotNull Integer requesterId,
-                @NotNull Integer responserId
-        ) {
+public record FriendshipRequest(
+    @NotNull
+    Integer fromId,
+
+    @NotNull
+    Integer toId
+) {
 }

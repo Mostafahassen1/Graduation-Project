@@ -5,129 +5,228 @@ import com.codemeet.entity.MeetingStatus;
 import com.codemeet.entity.Participant;
 import com.codemeet.entity.User;
 import com.codemeet.repository.MeetingRepository;
-import com.codemeet.utils.dto.InstantMeetingRequest;
-import com.codemeet.utils.dto.MeetingResponse;
-import com.codemeet.utils.dto.ParticipantRequest;
-import com.codemeet.utils.dto.ScheduleMeetingRequest;
+import com.codemeet.repository.ParticipantRepository;
+import com.codemeet.utils.dto.*;
 import com.codemeet.utils.exception.EntityNotFoundException;
+import com.codemeet.utils.exception.IllegalActionException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class MeetingService {
 
     private final MeetingRepository meetingRepository;
+    private final ParticipantRepository participantRepository;
     private final NotificationService notificationService;
-    private final ParticipantService participantService;
     private final UserService userService;
-    public MeetingService
-            (MeetingRepository meetingRepository,
-             NotificationService notificationService,
-             ParticipantService participantService,
-             UserService userService)
-    {
+
+    public MeetingService(
+            MeetingRepository meetingRepository,
+            ParticipantRepository participantRepository,
+            NotificationService notificationService,
+            UserService userService
+    ) {
         this.meetingRepository = meetingRepository;
-        this.notificationService=notificationService;
-        this.participantService = participantService;
-        this.userService=userService;
+        this.notificationService = notificationService;
+        this.participantRepository = participantRepository;
+        this.userService = userService;
     }
 
-
-   public List<MeetingResponse> getPreviousMeetings(Integer userId){
-
-        return meetingRepository.getPreviousMeetings(userId);
+    public Meeting getMeetingEntityById(Integer meetingId) {
+        return meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Meeting with id '%d' not found".formatted(meetingId)));
     }
-  public   List<MeetingResponse> getScheduledMeetings(Integer userId){
 
-        return meetingRepository.getScheduledMeetings(userId);
+    public List<Meeting> getAllPreviousMeetingEntities(Integer userId) {
+        userService.getUserEntityById(userId);
+        return meetingRepository.getAllPrevious(userId);
     }
-    public MeetingResponse scheduleMeeting(ScheduleMeetingRequest scheduledMeetingRequest)
-    {
-        //schedule meeting
 
-        User creator=userService.getUserEntityById(scheduledMeetingRequest.creatorId());
-        Meeting scheduledMeeting=new Meeting
-                (       scheduledMeetingRequest.title(),
-                        scheduledMeetingRequest.description(),
-                        creator,
-                        scheduledMeetingRequest.startTime(),
-                        MeetingStatus.SCHEDULED
-                );
-       Meeting savedMeeting= meetingRepository.save(scheduledMeeting);
-
-       //add participants and creator to list of participants
-       Set<Participant> participants = new HashSet<>();
-       scheduledMeetingRequest.participants().forEach((p)->{
-
-           User user=userService.getUserEntityByUsername(p);
-           participants.add(new Participant(savedMeeting,user));
-       });
-       participants.add(new Participant(savedMeeting,creator));
-
-       participantService.addParticipants(participants);
-
-        //todo: send notifications to participants
-        //todo:  schedule job to run at given time which notifies creator client to start the meeting now
-        // todo: and notifies all participants that there is a meeting now
-
-        return new MeetingResponse(savedMeeting.getId(), savedMeeting.getTitle(),savedMeeting.getStartsAt());
+    public List<Meeting> getAllScheduledMeetingEntities(Integer userId) {
+        userService.getUserEntityById(userId);
+        return meetingRepository.getAllScheduled(userId);
     }
-    public MeetingResponse startInstantMeeting(InstantMeetingRequest instantMeetingRequest)
-    {
 
-        // create instant meeting
-        User creator=userService.getUserEntityById(instantMeetingRequest.creatorId());
-        Meeting instantMeeting=new Meeting
-                (       instantMeetingRequest.title(),
-                        instantMeetingRequest.description(),
-                        creator,
-                        Instant.now(),
-                        MeetingStatus.RUNNING
-                );
-        Meeting savedMeeting= meetingRepository.save(instantMeeting);
-        // add creator only to participants here
-        Set<Participant>participants =new HashSet<>();
-        participants.add(new Participant(savedMeeting,creator));
-        participantService.addParticipants(participants);
+    public Participant getParticipantEntityById(Integer participantId) {
+        return participantRepository.findById(participantId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Participant with id '%d' not found".formatted(participantId)));
+    }
 
-        //todo:  notify creator client to start the meeting now
-        return new MeetingResponse(savedMeeting.getId(), savedMeeting.getTitle(),savedMeeting.getStartsAt());
+    public Participant getParticipantEntityByUsernameAndMeetingId(
+            String username, Integer meetingId
+    ) {
+        return participantRepository.findByUsernameAndMeetingId(username, meetingId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Participant with username '%s' and meetingId '%d' not found"
+                                .formatted(username, meetingId)));
+    }
+
+    public List<Participant> getAllParticipantEntitiesByMeetingId(Integer meetingId) {
+        getMeetingEntityById(meetingId); // Ensures that this meeting exists
+        return participantRepository.findByMeetingId(meetingId);
+    }
+
+    public List<MeetingInfoResponse> getAllPreviousMeetings(Integer userId) {
+        return getAllPreviousMeetingEntities(userId).stream()
+                .map(MeetingInfoResponse::of)
+                .toList();
+    }
+
+    public List<MeetingInfoResponse> getAllScheduledMeetings(Integer userId) {
+        return getAllScheduledMeetingEntities(userId).stream()
+                .map(MeetingInfoResponse::of)
+                .toList();
+    }
+
+    public ParticipantInfoResponse getParticipantById(Integer participantId) {
+        return ParticipantInfoResponse.of(getParticipantEntityById(participantId));
+    }
+
+    public ParticipantInfoResponse getParticipantByUsernameAndMeetingId(
+            String username, Integer meetingId
+    ) {
+        return ParticipantInfoResponse.of(
+                getParticipantEntityByUsernameAndMeetingId(username, meetingId));
+    }
+
+    public List<ParticipantInfoResponse> getAllParticipantsOfMeeting(Integer meetingId) {
+        return getAllParticipantEntitiesByMeetingId(meetingId).stream()
+                .map(ParticipantInfoResponse::of)
+                .toList();
     }
 
     @Transactional
-    public Boolean addParticipantToMeeting(ParticipantRequest participantRequest)
-    {
-        //todo:possible to check cache before hitting DB
+    public MeetingInfoResponse scheduleMeeting(
+            ScheduleMeetingRequest scheduledMeetingRequest
+    ) {
+        // Schedule meeting
+        User creator = userService.getUserEntityById(scheduledMeetingRequest.creatorId());
 
-        User user= userService.getUserEntityById(participantRequest.participantId());
+        Meeting scheduledMeeting = new Meeting(
+                scheduledMeetingRequest.title(),
+                scheduledMeetingRequest.description(),
+                creator,
+                scheduledMeetingRequest.startsAt(),
+                MeetingStatus.SCHEDULED
+        );
 
-        Meeting meeting=meetingRepository.findById(participantRequest.meetingId())
-                .orElseThrow(()-> new EntityNotFoundException("Meeting with id= "+participantRequest.meetingId()+" is not found"));
+        meetingRepository.save(scheduledMeeting);
 
+        // Add participants and creator to list of participants
+        List<Participant> participants = new ArrayList<>(
+                scheduledMeetingRequest.participants().stream()
+                        .map(username -> new Participant(
+                                userService.getUserEntityByUsername(username),
+                                scheduledMeeting
+                        )).toList()
+        );
 
-        Participant participant=new Participant(meeting,user);
-        participantService.addParticipant(participant);
+        participants.add(new Participant(creator, scheduledMeeting));
 
-        return true;
+        participantRepository.saveAll(participants);
+
+        //TODO: Send notifications to participants
+        //TODO: Schedule job to run at given time which notifies creator client to start the meeting now
+        //TODO: and notifies all participants that there is a meeting now
+
+        return MeetingInfoResponse.of(scheduledMeeting);
     }
+
     @Transactional
-    public  Boolean removeParticipantFromMeeting(ParticipantRequest participantRequest)
-    {
-        //todo:possible to check cache before hitting DB
+    public MeetingInfoResponse startInstantMeeting(
+            InstantMeetingRequest instantMeetingRequest
+    ) {
+        // Create instant meeting
+        User creator = userService.getUserEntityById(instantMeetingRequest.creatorId());
 
+        Meeting instantMeeting = new Meeting(
+                instantMeetingRequest.title(),
+                instantMeetingRequest.description(),
+                creator,
+                Instant.now(),
+                MeetingStatus.RUNNING
+        );
 
-        participantService.removeParticipant(participantRequest);
-        return true;
+        meetingRepository.save(instantMeeting);
+        participantRepository.save(new Participant(creator, instantMeeting));
+
+        //TODO: Run job to notify creator client to start the meeting now
+
+        return MeetingInfoResponse.of(instantMeeting);
     }
-    public void triggerMeeting()
-    {
-        //todo: this function sends notifying logic for creator and other participants and called by scheduled job at specific time
+
+    @Transactional
+    public ParticipantInfoResponse addParticipantToMeeting(ParticipantRequest participantRequest) {
+        //TODO: Possible to check cache before hitting DB
+        User user = userService.getUserEntityByUsername(participantRequest.username());
+        Meeting meeting = getMeetingEntityById(participantRequest.meetingId());
+
+        //TODO: Some cases to handle:
+        //  - A user joins then leaves then joins again.
+        //       - Avoid reinserting that user to the same meeting.
+        //  - Adding a user to non running meeting.
+
+        Participant participant = participantRepository.save(
+                new Participant(user, meeting)
+        );
+
+        return ParticipantInfoResponse.of(participant);
     }
 
+    @Transactional
+    public void removeParticipantFromMeeting(ParticipantRequest participantRequest) {
+        //TODO: Possible to check cache before hitting DB
+        Participant participant = getParticipantEntityByUsernameAndMeetingId(
+                participantRequest.username(), participantRequest.meetingId()
+        );
+
+        if (isMeetingCreator(participant)) {
+            throw new IllegalActionException(
+                    "Meeting creator can't be removed from the meeting");
+        }
+
+        participantRepository.delete(participant);
+    }
+
+    @Transactional
+    public void removeParticipantFromMeeting(Integer participantId) {
+        Participant participant = getParticipantEntityById(participantId);
+
+        if (isMeetingCreator(participant)) {
+            throw new IllegalActionException(
+                    "Meeting creator can't be removed from the meeting");
+        }
+
+        participantRepository.delete(participant);
+    }
+
+    public void triggerMeeting() {
+        //TODO: This function sends notifying logic for creator and other participants and called by scheduled job at specific time
+    }
+
+    /**
+     * Closes a running meeting.
+     * @param participantRequest a request for closing the meeting by a user.
+     */
+    @Transactional
+    public void closeMeeting(ParticipantRequest participantRequest) {
+        Participant participant = getParticipantEntityByUsernameAndMeetingId(
+                participantRequest.username(), participantRequest.meetingId()
+        );
+
+        //TODO: Some cases to handle:
+        //  - The meeting creator is the only one who can close the meeting.
+        //  - The meeting should be running to close it.
+
+        participant.getMeeting().setStatus(MeetingStatus.FINISHED);
+    }
+
+    private boolean isMeetingCreator(Participant p) {
+        return p.getMeeting().getCreator().getId().equals(p.getUser().getId());
+    }
 }

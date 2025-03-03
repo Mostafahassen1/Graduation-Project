@@ -45,9 +45,9 @@ public record UserUpdateRequest(
         max = 100
     )
     String password,
-    
-
-    
-    byte[] profilePicture
+      @NotNull
+      String phoneNumber
+        ,
+    String profilePictureUrl
 ) {
 }

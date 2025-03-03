@@ -24,15 +24,15 @@ public class Friendship {
     @Column(nullable = false)
     private FriendshipStatus status;
     
-    public Friendship(User from,User to,FriendshipStatus status) {
-        this.from=from;
-        this.to=to;
-        this.status=status;
+    public Friendship(User from, User to, FriendshipStatus status) {
+        this.from = from;
+        this.to = to;
+        this.status = status;
     }
-    public Friendship()
-    {
 
+    public Friendship() {
     }
+
     public Integer getId() {
         return id;
     }

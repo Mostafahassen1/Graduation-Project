@@ -1,6 +1,5 @@
 package com.codemeet.entity;
 
-
 import jakarta.persistence.*;
 
 import java.time.Instant;

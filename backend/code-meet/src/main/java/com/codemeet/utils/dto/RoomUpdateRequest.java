@@ -19,6 +19,6 @@ public record RoomUpdateRequest(
     @Length(max = 255)
     String description,
     
-    byte[] roomPicture
+    String roomPictureUrl
 ) {
 }

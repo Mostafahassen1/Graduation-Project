@@ -22,13 +22,12 @@ public class NotificationController {
     public NotificationController(NotificationService notificationService) {
         this.notificationService = notificationService;
     }
-    @GetMapping("{userId}")
+
+    @GetMapping("/{userId}")
     public CompletableFuture<ResponseEntity<List<NotificationDTO>>>getNotifications(@PathVariable Integer userId)
     {
         CompletableFuture<List<NotificationDTO>>notifications=notificationService.getNotifications(userId);
 
         return notifications.thenApply(ResponseEntity::ok);
     }
-
-
 }

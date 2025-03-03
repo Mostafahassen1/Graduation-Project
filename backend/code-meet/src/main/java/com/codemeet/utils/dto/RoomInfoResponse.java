@@ -10,7 +10,7 @@ public record RoomInfoResponse(
     String roomDescription,
     Integer creatorId,
     Instant createdAt,
-    byte[] roomPicture
+    String roomPictureUrl
 ) {
 
     public static RoomInfoResponse of(Room room) {
@@ -20,7 +20,7 @@ public record RoomInfoResponse(
             room.getDescription(),
             room.getCreator().getId(),
             room.getCreatedAt(),
-            room.getRoomPicture()
+            room.getRoomPictureUrl()
         );
     }
 }

@@ -70,12 +70,12 @@ public class RoomService {
 
     @Transactional
     public RoomInfoResponse createRoom(RoomCreationRequest creationRequest) {
-        User creator=userService.getUserEntityById(creationRequest.creatorId());
+        User creator = userService.getUserEntityById(creationRequest.creatorId());
         Room room = new Room(
-                creationRequest.name(),
-                creationRequest.description(),
-                creator,
-                creationRequest.roomPicture()
+            creationRequest.name(),
+            creationRequest.description(),
+            creator,
+            creationRequest.roomPictureUrl()
         );
 
         addRoomEntity(room);
@@ -91,7 +91,7 @@ public class RoomService {
         Room room = getRoomEntityById(updateRequest.roomId()); // Persisted
         room.setName(updateRequest.name());
         room.setDescription(updateRequest.description());
-        room.setRoomPicture(updateRequest.roomPicture());
+        room.setRoomPictureUrl(updateRequest.roomPictureUrl());
         return RoomInfoResponse.of(room);
     }
 }

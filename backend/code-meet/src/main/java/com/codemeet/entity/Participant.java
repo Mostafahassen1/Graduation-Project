@@ -1,15 +1,17 @@
 package com.codemeet.entity;
 
-
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "participants", uniqueConstraints = {
+@Table(
+    name = "participants",
+    uniqueConstraints = {
         @UniqueConstraint(
-                name = "PARTICIPANT_UNIQUE",
-                columnNames = {"user_id", "meeting_id"}
+            name = "PARTICIPANT_UNIQUE",
+            columnNames = {"user_id", "meeting_id"}
         )
-})
+    }
+)
 public class Participant {
     
     @Id
@@ -24,15 +26,14 @@ public class Participant {
     @JoinColumn(nullable = false)
     private Meeting meeting;
 
-    public Participant(Meeting meeting,User user)
-    {
-        this.user=user;
-        this.meeting=meeting;
+    public Participant(User user, Meeting meeting) {
+        this.user = user;
+        this.meeting = meeting;
     }
-    public Participant()
-    {
 
+    public Participant() {
     }
+
     public Integer getId() {
         return id;
     }

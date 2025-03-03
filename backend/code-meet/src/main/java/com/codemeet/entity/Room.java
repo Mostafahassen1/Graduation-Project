@@ -27,19 +27,18 @@ public class Room {
     @Temporal(TemporalType.TIMESTAMP)
     private Instant createdAt;
     
-    @Lob
-    private byte[] roomPicture;
+    private String roomPictureUrl;
 
-    public Room(String name,String description,User creator,byte[] roomPicture) {
-        this.name=name;
-        this.description=description;
-        this.creator=creator;
-        this.roomPicture=roomPicture;
+    public Room(String name, String description, User creator, String roomPictureUrl) {
+        this.name = name;
+        this.description = description;
+        this.creator = creator;
+        this.roomPictureUrl = roomPictureUrl;
     }
-    public Room()
-    {
 
+    public Room() {
     }
+
     public Integer getId() {
         return id;
     }
@@ -75,12 +74,12 @@ public class Room {
     public Instant getCreatedAt() {
         return createdAt;
     }
-    
-    public byte[] getRoomPicture() {
-        return roomPicture;
+
+    public String getRoomPictureUrl() {
+        return roomPictureUrl;
     }
-    
-    public void setRoomPicture(byte[] roomPicture) {
-        this.roomPicture = roomPicture;
+
+    public void setRoomPictureUrl(String roomPictureUrl) {
+        this.roomPictureUrl = roomPictureUrl;
     }
 }

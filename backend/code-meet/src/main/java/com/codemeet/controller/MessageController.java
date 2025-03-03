@@ -23,7 +23,7 @@ public class MessageController {
 
     @GetMapping("/room/{roomId}")
     public ResponseEntity<List<RoomMessageInfoResponse>> getAllMessagesOfRoom(
-        @PathVariable int roomId
+        @PathVariable Integer roomId
     ) {
         return ResponseEntity.ok(messageService.getAllMessagesOfRoom(roomId));
     }

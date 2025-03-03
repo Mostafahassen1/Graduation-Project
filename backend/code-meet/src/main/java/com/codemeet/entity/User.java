@@ -35,8 +35,7 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Instant createdAt;
 
-    @Lob // Indicates a large object (BLOB in the database)
-    private byte[] profilePicture;
+    private String profilePictureUrl;
     
     public User() {
     }
@@ -100,12 +99,12 @@ public class User {
     public Instant getCreatedAt() {
         return createdAt;
     }
-    
-    public byte[] getProfilePicture() {
-        return profilePicture;
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
     }
-    
-    public void setProfilePicture(byte[] profilePicture) {
-        this.profilePicture = profilePicture;
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
     }
 }
