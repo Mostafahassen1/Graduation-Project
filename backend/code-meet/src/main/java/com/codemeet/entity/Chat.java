@@ -12,7 +12,7 @@ public abstract class Chat {
     private Integer id;
     
     @OneToOne
-    private Message lastSent;
+    private Message lastSentMessage;
     
     public Integer getId() {
         return id;
@@ -22,11 +22,11 @@ public abstract class Chat {
         this.id = id;
     }
     
-    public Message getLastSent() {
-        return lastSent;
+    public Message getLastSentMessage() {
+        return lastSentMessage;
     }
     
-    public void setLastSent(Message lastSent) {
-        this.lastSent = lastSent;
+    public void setLastSentMessage(Message lastSent) {
+        this.lastSentMessage = lastSent;
     }
 }
