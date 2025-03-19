@@ -11,10 +11,22 @@ public abstract class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private User owner;
-    
     @OneToOne
     private Message lastSent;
+    
+    public Integer getId() {
+        return id;
+    }
+    
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
+    public Message getLastSent() {
+        return lastSent;
+    }
+    
+    public void setLastSent(Message lastSent) {
+        this.lastSent = lastSent;
+    }
 }

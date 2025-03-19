@@ -13,7 +13,7 @@ public class UserChatDTO {
 
     public UserChatDTO(User user) {
         this.nickName = user.getUsername();
-        this.fullName = user.getFirstName() + " " + user.getLastName();
+        this.fullName = user.getFullName();
     }
 
     public String getNickName() {
