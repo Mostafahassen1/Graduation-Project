@@ -1,9 +1,9 @@
 <a
   routerLink="{{ routeLink }}"
-  routerLinkActive="bg-indigo-600 text-white font-bold hover:text-white hover:bg-indigo-800"
-  [routerLinkActiveOptions]="{ exact: true }"
+  routerLinkActive="bg-indigo-600 shadow-md text-white font-bold hover:text-white hover:bg-indigo-800"
+  [routerLinkActiveOptions]="{ exact: false }"
   [ngClass]="{'space-x-3': !isSidebarMinimized, 'justify-center': isSidebarMinimized}"
-  class="group flex relative items-center p-3 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-colors"
+  class="group flex relative items-center p-3 mr-3 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-colors"
 >
   <svg
     class="w-6 h-6"

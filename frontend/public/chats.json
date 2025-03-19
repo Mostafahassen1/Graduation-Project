@@ -1,0 +1,110 @@
+
+[
+  {
+    "id": "chat123",
+    "senderName": "Mustafa Tarek",
+    "senderUsername": "Mustafa_wonderland",
+    "senderProfileImage": "https://avatars.githubusercontent.com/u/137217749?v=4",
+    "lastMessage": "See you tomorrow!",
+    "chatMessages": [
+      {
+        "sender": "Mustafa",
+        "message": "Hey! How are you?",
+        "outgoing": false
+      },
+      {
+        "sender": "Mustafa",
+        "message": "I'm glad to talk to you!",
+        "outgoing": false
+      },
+      {
+        "sender": "You",
+        "message": "I'm good, thanks! How about you?",
+        "outgoing": true
+      },
+      {
+        "sender": "Mustafa",
+        "message": "Doing well! Are you free for lunch tomorrow?",
+        "outgoing": false
+      },
+      {
+        "sender": "You",
+        "message": "Yes, that sounds great!",
+        "outgoing": true
+      },
+      {
+        "sender": "Mustafa",
+        "message": "See you tomorrow!",
+        "outgoing": false
+      }
+    ]
+  },
+  {
+    "id": "chat456",
+    "senderName": "Abdo Emad",
+    "senderUsername": "Abdo_the_builder",
+    "senderProfileImage": "https://avatars.githubusercontent.com/u/87956334?v=4",
+    "lastMessage": "Okay, I'll check it out.",
+    "chatMessages": [
+      {
+        "sender": "Abdo",
+        "message": "Did you see the latest news?",
+        "outgoing": false
+      },
+      {
+        "sender": "You",
+        "message": "No, what happened?",
+        "outgoing": true
+      },
+      {
+        "sender": "Abdo",
+        "message": "There's a new article about the upcoming tech conference.",
+        "outgoing": false
+      },
+      {
+        "sender": "You",
+        "message": "Oh, interesting. Can you send me the link?",
+        "outgoing": true
+      },
+      {
+        "sender": "Abdo",
+        "message": "Sure, here it is: [link to article]",
+        "outgoing": false
+      },
+      {
+        "sender": "You",
+        "message": "Okay, I'll check it out.",
+        "outgoing": true
+      }
+    ]
+  },
+  {
+    "id": "chat789",
+    "senderName": "Mustafa Hussien",
+    "senderUsername": "Samy_singer",
+    "senderProfileImage": "https://avatars.githubusercontent.com/u/134046265?v=4",
+    "lastMessage": "Sounds good!",
+    "chatMessages": [
+      {
+        "sender": "You",
+        "message": "Hey Samy, are you free this weekend?",
+        "outgoing": true
+      },
+      {
+        "sender": "Samy",
+        "message": "Possibly! What did you have in mind?",
+        "outgoing": false
+      },
+      {
+        "sender": "You",
+        "message": "I was thinking we could go to the park.",
+        "outgoing": true
+      },
+      {
+        "sender": "Samy",
+        "message": "Sounds good!",
+        "outgoing": false
+      }
+    ]
+  }
+]

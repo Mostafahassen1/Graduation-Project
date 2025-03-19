@@ -7,6 +7,8 @@
   </h3>
   <div>
     <button
+      routerLink="/friends/requests"
+      (click)="showRequests()"
       type="button"
       class="cursor-pointer inline-block rounded-sm border border-indigo-600 px-4 py-2 text-md font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white transition-colors"
     >
@@ -16,11 +18,13 @@
 
         <!-- Red notification dot -->
         <circle
+          *ngIf="requestsExists"
           cx="20"
           cy="4"
           r="3"
           fill="#ef4444"
           class="notification-dot"
+          stroke="none"
         />
       </svg>
       Requests
@@ -33,10 +37,10 @@
   {
     <app-friend-card
     class="cursor-pointer"
-    (messageClicked)="handleMessage()"
     [friend]="friend"
   ></app-friend-card>
   }
- 
- 
+
 </div>
+
+<app-friend-requests (requestsState)="hideRequests()" *ngIf="RequestsShown"/>

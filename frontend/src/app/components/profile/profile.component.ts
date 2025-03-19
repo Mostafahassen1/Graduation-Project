@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {NgIf} from '@angular/common';
+import {ProfileEditComponent} from './profile-edit/profile-edit.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
-    NgIf
+    NgIf,
+    RouterLink,
+    ProfileEditComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
@@ -15,14 +18,13 @@ export class ProfileComponent {
   userName!: string | null;
   isOwnProfile: boolean = false;
   areFriends : boolean = false;
+  editProfile: boolean = false;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(protected router: Router) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      this.userName = params.get('userName'); // Get the 'id' parameter from the URL
-      this.isOwnProfile = !this.userName; // If no ID, it's the signed-in user's profile
-    });
+    if (this.router.url === '/profile')
+      this.isOwnProfile = true;
   }
 
   addFriend() {
@@ -31,5 +33,9 @@ export class ProfileComponent {
 
   removeFriend() {
     this.areFriends = false;
+  }
+
+  enableProfileEdit() {
+    this.editProfile = true;
   }
 }

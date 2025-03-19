@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component } from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {RouterLink} from '@angular/router';
 
 @Component({
@@ -10,9 +10,25 @@ import {RouterLink} from '@angular/router';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
-  isDropdownOpen = false;
+  isProfileDropdownOpen: boolean = false;
+  isNotificationsDropdownOpen: boolean = false;
+  @ViewChild('overlay') dropdownOverlay!: ElementRef<HTMLDivElement>;
 
-  toggleProfileDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
+  toggleProfileDropdown () : void {
+    this.isProfileDropdownOpen = !this.isProfileDropdownOpen;
+    this.isNotificationsDropdownOpen = false;
+    this.dropdownOverlay.nativeElement.classList.remove('hidden');
+  }
+
+  toggleNotificationsDropdown () : void {
+    this.isNotificationsDropdownOpen = !this.isNotificationsDropdownOpen;
+    this.isProfileDropdownOpen = false;
+    this.dropdownOverlay.nativeElement.classList.remove('hidden');
+  }
+
+  closeDropdown() {
+    this.isProfileDropdownOpen = false;
+    this.isNotificationsDropdownOpen = false;
+    this.dropdownOverlay.nativeElement.classList.add('hidden');
   }
 }

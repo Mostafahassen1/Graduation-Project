@@ -15,6 +15,7 @@ import { SignupComponent } from './components/signup/signup.component';
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
+  title: string = '';
   message = '';
 
   constructor(private webSocketService: WebSocketService) {}

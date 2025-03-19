@@ -1,5 +1,5 @@
 <!-- Sidebar Header -->
-<header class="p-4 border-b border-gray-300 flex max-h-[12dvh] flex-col gap-2 justify-between items-center">
+<header class="p-4 border-b border-gray-300 flex items-center h-[12dvh] gap-2 justify-between items-center">
   <div class="relative w-full">
     <input
       type="text"
@@ -9,9 +9,7 @@
     />
 
     <span class="absolute inset-y-0 end-0 grid w-10 place-content-center">
-  <button type="button" class="text-gray-600 hover:text-gray-700">
-    <span class="sr-only">Search</span>
-
+  <button type="button" class="cursor-pointer text-gray-600 hover:text-gray-700">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -32,6 +30,8 @@
 </header>
 
 <!-- Contact List -->
-<div class="overflow-y-auto h-[76dvh] p-3">
-  <app-chatcard (click)="toggleChatBox()"></app-chatcard>
+<div class="overflow-y-auto h-[76dvh]">
+  @for (chat of chats; track chat) {
+    <app-chatcard [route]="'/chats/' + chat.id" [senderName]="chat.senderName" [profileImage]="chat.senderProfileImage" [lastMessage]="chat.lastMessage"></app-chatcard>
+  }
 </div>

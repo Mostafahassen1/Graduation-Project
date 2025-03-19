@@ -1,9 +1,9 @@
 <app-header></app-header>
 
 <div class="flex">
-<app-sidebar (sidebarState)="getSidebarState($event)" [ngClass]="{'w-1/5': !isSidebarMinimized, 'w-1/12': isSidebarMinimized}"></app-sidebar>
+<app-sidebar [isSidebarMinimized]="isSidebarMinimized" (sidebarState)="getSidebarState($event)" [ngClass]="{'w-1/5': !isSidebarMinimized, 'w-1/12': isSidebarMinimized}"></app-sidebar>
 
-   <div class="bg-white relative h-[88dvh] overflow-y-auto" [ngClass]="{'w-4/5': !isSidebarMinimized, 'w-11/12': isSidebarMinimized, 'p-12': !isChatPage}">
-        <router-outlet></router-outlet>
+   <div class="bg-white relative h-[88dvh] overflow-y-auto" [ngClass]="{'w-4/5': !isSidebarMinimized, 'w-11/12': isSidebarMinimized, 'p-12': !noPadding}">
+        <router-outlet (activate)="onActivated($event)"></router-outlet>
    </div>
 </div>

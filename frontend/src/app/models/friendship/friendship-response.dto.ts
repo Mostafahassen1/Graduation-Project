@@ -1,7 +1,7 @@
 export interface FriendshipResponse{
      friendshipId:number,
-     friendFirstName:String,
-     friendLastName:String,
-     friendUserName:String,
-     friendProfilePicture:Blob
+     friendFirstName:string,
+     friendLastName:string,
+     friendUserName:string,
+     friendProfilePicture:string // represents the image url
 }

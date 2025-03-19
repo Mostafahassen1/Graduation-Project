@@ -1,6 +1,6 @@
 <!-- component -->
 <div class="flex h-[88dvh] w-full overflow-hidden">
-  <app-recentchats class="w-2/7 bg-white border-r border-gray-300 h-full"></app-recentchats>
+  <app-recentchats [chats]="chats" class="w-2/7 bg-white border-r border-gray-300 h-full"></app-recentchats>
 
   <div class="flex-1 w-full max-h-[88dvh] relative">
     <router-outlet></router-outlet>

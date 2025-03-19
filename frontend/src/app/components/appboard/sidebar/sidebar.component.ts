@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import { NavigationComponent } from './navigation/navigation.component';
 import {NgClass} from '@angular/common';
 
@@ -11,8 +11,7 @@ import {NgClass} from '@angular/common';
 })
 export class SidebarComponent {
   @Output() sidebarState = new EventEmitter<boolean>();
-
-  isSidebarMinimized = false;
+  @Input() isSidebarMinimized = false;
 
   toggleSidebarMinimization() {
     this.isSidebarMinimized = !this.isSidebarMinimized;

@@ -13,8 +13,8 @@ import {ProfileEditComponent} from './components/profile/profile-edit/profile-ed
 import {RoomsComponent} from './components/rooms/rooms.component';
 import {ChatsComponent} from './components/chats/chats.component';
 import {ChatboxComponent} from './components/chats/chatbox/chatbox.component';
-
-let signedIn: boolean = true;
+import {FriendRequestsComponent} from './components/friends/friend-requests/friend-requests.component';
+import {NotificationsComponent} from './components/notifications/notifications.component';
 
 const NotLoggedInRoutes: Routes = [
   {
@@ -46,12 +46,17 @@ const LoggedInRoutes: Routes = [
     children: [
       {path: '', redirectTo: 'home', pathMatch: 'full'},
       {path: 'home', component: HomeComponent, title: 'Home Page'},
-      {path: 'profile', component: ProfileComponent, title: 'My Profile'},
+      {path: 'notifications', component: NotificationsComponent, title: 'Your notifications'},
+      {path: 'profile', component: ProfileComponent, title: 'My Profile', children: [
+          {path: 'edit', component: ProfileEditComponent}
+        ]},
       {path: 'profile/:userName', component: ProfileComponent},
       {path: 'meetings', component: MeetingsComponent, title: 'My Meetings'},
       {path: 'rooms', component: RoomsComponent, title: 'My Rooms'},
       {path: 'room/:id', component: RoomsComponent},
-      {path: 'friends', component: FriendsComponent, title: 'My Friends'},
+      {path: 'friends', component: FriendsComponent, title: 'My Friends', children: [
+        {path: 'requests', component: FriendRequestsComponent}
+        ]},
       {path: 'chats', component: ChatsComponent, title: 'My Personal Chats', data: { isChatPage: true }, children: [
           {path: ':id', component: ChatboxComponent}
         ]},

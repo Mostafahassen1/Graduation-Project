@@ -1,13 +1,15 @@
 export interface UserInfoResponse{
-     userId:number,
-    
-     firstName:String,
-    
-    lastName:String,
-    
-    username:String,
-    
-   email:String,
-
- profilePicture:Blob
+  userId:number,
+  firstName:string,
+  lastName:string,
+  username:string,
+  email:string,
+  phoneNumber: string,
+  profilePicture?: string,
+  dateOfBirth?: Date,
+  gender?: string,
+  country?: string,
+  city?: string,
+  bio?: string,
+  jobTitle?: string,
 }
