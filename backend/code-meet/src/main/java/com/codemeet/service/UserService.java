@@ -21,8 +21,20 @@ public class UserService {
         this.userRepository = userRepository;
     }
     
-    public boolean exists(int userId) {
+    public boolean existsById(int userId) {
         return userRepository.existsById(userId);
+    }
+    
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+    
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+    
+    public User save(User user) {
+        return userRepository.save(user);
     }
     
     public User getUserEntityById(int id) {
