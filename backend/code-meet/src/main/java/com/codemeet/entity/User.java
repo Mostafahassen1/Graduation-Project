@@ -28,7 +28,7 @@ public class User {
     @Column(nullable = false, length = 100)
     private String password;
 
-    @Column(nullable = false, length = 25)
+    @Column(nullable = false, length = 11)
     private String phoneNumber;
 
     @CreationTimestamp
