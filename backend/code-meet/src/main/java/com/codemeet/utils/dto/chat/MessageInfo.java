@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
 
-public record MessageInfoResponse(
+public record MessageInfo(
     @NotNull
     Integer chatId,
     
@@ -21,8 +21,8 @@ public record MessageInfoResponse(
     Instant sentAt
 ) {
     
-    public static MessageInfoResponse of(Message message) {
-        return new MessageInfoResponse(
+    public static MessageInfo of(Message message) {
+        return new MessageInfo(
             message.getChat().getId(),
             message.getSender().getId(),
             message.getContent(),

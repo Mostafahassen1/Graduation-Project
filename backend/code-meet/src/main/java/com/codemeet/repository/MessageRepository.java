@@ -13,6 +13,17 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
         """
         SELECT m
         FROM Message m
+        JOIN RoomChat rc
+        ON m.chat.id = rc.id
+        WHERE rc.room.id = :roomId
+        """
+    )
+    List<Message> findAllByRoomId(Integer roomId);
+    
+    @Query(
+        """
+        SELECT m
+        FROM Message m
         WHERE m.chat.id = :chatId
         """
     )
@@ -35,5 +46,5 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
         AND m.sentAt > :instant
         """
     )
-    List<Message> findAllSentAfterByChatId(Integer chatId, Instant instant);
+    List<Message> findAllSentAfterInstantByChatId(Integer chatId, Instant instant);
 }

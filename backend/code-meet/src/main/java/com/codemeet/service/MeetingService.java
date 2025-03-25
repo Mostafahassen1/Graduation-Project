@@ -14,6 +14,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.time.Instant;
 import java.util.*;
 
+import static com.codemeet.entity.NotificationType.SCHEDULED_MEETING;
+
 @Service
 public class MeetingService {
 
@@ -129,24 +131,32 @@ public class MeetingService {
 
         participantRepository.saveAll(participants);
 
-        // Send notifications to participants...
+        // Send notifications to all participants...
         TransactionSynchronizationManager.registerSynchronization(
             new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    for (Participant p : participants) {
-                        Notification n = new Notification();
-                        n.setReceiver(p.getUser());
-                        n.setContent("You are invited to a new meeting (%s)"
-                            .formatted(scheduledMeeting.getStartsAt()));
-                        notificationService.sendToUser(n);
+                    for (Participant participant : participants) {
+                        Notification notification = new Notification();
+                        notification.setInfo(new LinkedHashMap<>(Map.ofEntries(
+                            Map.entry("creatorUsername", creator.getUsername()),
+                            Map.entry("creatorFullName", creator.getFullName()),
+                            Map.entry("meetingTitle", scheduledMeeting.getTitle()),
+                            Map.entry("startsAt", scheduledMeeting.getStartsAt().toString())
+                        )));
+                        notification.setType(SCHEDULED_MEETING);
+                        notification.setReceiver(participant.getUser());
+                        
+                        // When user clicks on the notification, it should
+                        // be forwarded to the scheduled meetings tab...
+                        notificationService.sendToUser(notification);
                     }
                 }
             }
         );
         
         //TODO: Schedule job to run at given time which notifies creator client to start the meeting now
-        //TODO: and notifies all participants that there is a meeting now
+        //TODO: and notifies all participants that there is a meeting now...
 
         return MeetingInfoResponse.of(scheduledMeeting);
     }

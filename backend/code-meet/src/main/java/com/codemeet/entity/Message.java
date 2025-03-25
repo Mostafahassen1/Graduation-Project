@@ -8,7 +8,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "messages")
-public abstract class Message {
+public class Message {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +30,12 @@ public abstract class Message {
     private Instant sentAt;
     
     public Message() {
+    }
+    
+    public Message(Chat chat, User sender, String content) {
+        this.chat = chat;
+        this.sender = sender;
+        this.content = content;
     }
     
     public Integer getId() {

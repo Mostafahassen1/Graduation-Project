@@ -1,9 +1,6 @@
 package com.codemeet.service;
 
-import com.codemeet.entity.Friendship;
-import com.codemeet.entity.FriendshipStatus;
-import com.codemeet.entity.Notification;
-import com.codemeet.entity.User;
+import com.codemeet.entity.*;
 import com.codemeet.repository.FriendshipRepository;
 import com.codemeet.utils.dto.FriendshipRequest;
 import com.codemeet.utils.dto.FriendshipResponse;
@@ -16,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.codemeet.entity.NotificationType.*;
@@ -127,11 +126,17 @@ public class FriendshipService {
             new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    Notification n = new Notification();
-                    n.setReceiver(to);
-                    n.setContent(FRIENDSHIP_REQUEST.getAbstractContent()
-                        .formatted(from.getFullName(), from.getUsername()));
-                    notificationService.sendToUser(n);
+                    Notification notification = new Notification();
+                    notification.setInfo(new LinkedHashMap<>(Map.ofEntries(
+                        Map.entry("senderUsername", from.getUsername()),
+                        Map.entry("senderFullName", from.getFullName())
+                    )));
+                    notification.setReceiver(to);
+                    notification.setType(FRIENDSHIP_REQUEST);
+                    
+                    // When client click on the notification, it should
+                    // be forward to friendship requests tab.
+                    notificationService.sendToUser(notification);
                 }
             }
         );
@@ -147,21 +152,27 @@ public class FriendshipService {
 
     @Transactional
     public void acceptFriendshipRequest(Integer friendshipId) {
-        Friendship f = getFriendshipEntityById(friendshipId);
+        Friendship friendship = getFriendshipEntityById(friendshipId);
 
-        if (f.getStatus() == FriendshipStatus.PENDING) {
-            f.setStatus(FriendshipStatus.ACCEPTED);
+        if (friendship.getStatus() == FriendshipStatus.PENDING) {
+            friendship.setStatus(FriendshipStatus.ACCEPTED);
             
             // Sending notification...
             TransactionSynchronizationManager.registerSynchronization(
                 new TransactionSynchronization() {
                     @Override
                     public void afterCommit() {
-                        Notification n = new Notification();
-                        n.setReceiver(f.getFrom());
-                        n.setContent(FRIENDSHIP_ACCEPTED.getAbstractContent()
-                            .formatted(f.getTo().getFullName(), f.getTo().getUsername()));
-                        notificationService.sendToUser(n);
+                        Notification notification = new Notification();
+                        notification.setInfo(new LinkedHashMap<>(Map.ofEntries(
+                            Map.entry("acceptorUsername", friendship.getTo().getUsername()),
+                            Map.entry("acceptorFullName", friendship.getTo().getFullName())
+                        )));
+                        notification.setReceiver(friendship.getFrom());
+                        notification.setType(FRIENDSHIP_ACCEPTED);
+                        
+                        // When client click on the notification, it should
+                        // be forward to the friend profile.
+                        notificationService.sendToUser(notification);
                     }
                 }
             );

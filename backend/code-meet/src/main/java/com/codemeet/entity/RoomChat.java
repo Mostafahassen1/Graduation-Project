@@ -3,8 +3,10 @@ package com.codemeet.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "room_chats")
 public class RoomChat extends Chat {
     
     @OneToOne
