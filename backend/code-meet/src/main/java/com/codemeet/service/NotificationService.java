@@ -2,6 +2,7 @@ package com.codemeet.service;
 
 import com.codemeet.entity.Notification;
 import com.codemeet.repository.NotificationRepository;
+import com.codemeet.utils.dto.NotificationInfo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -32,17 +33,17 @@ public class NotificationService {
         return notifications;
     }
     
-    public void sendToUser(String destination, Notification notification) {
+    public void sendToUser(String destination, NotificationInfo notification) {
         messagingTemplate.convertAndSendToUser( // Maps to /user/{userId}/notification
-            notification.getReceiver().getId().toString(), destination, notification);
+            notification.receiverId().toString(), destination, notification);
     }
     
-    public void sendToUser(Notification notification) {
+    public void sendToUser(NotificationInfo notification) {
         sendToUser(DEFAULT_DESTINATION, notification);
     }
     
-    public void sendToUsers(Iterable<Notification> notifications) {
-        for (Notification notification : notifications) {
+    public void sendToUsers(Iterable<NotificationInfo> notifications) {
+        for (NotificationInfo notification : notifications) {
             sendToUser(notification);
         }
     }

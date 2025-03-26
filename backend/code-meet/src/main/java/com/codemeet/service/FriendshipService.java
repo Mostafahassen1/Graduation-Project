@@ -4,6 +4,7 @@ import com.codemeet.entity.*;
 import com.codemeet.repository.FriendshipRepository;
 import com.codemeet.utils.dto.FriendshipRequest;
 import com.codemeet.utils.dto.FriendshipResponse;
+import com.codemeet.utils.dto.NotificationInfo;
 import com.codemeet.utils.exception.DuplicateResourceException;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import com.codemeet.utils.exception.IllegalActionException;
@@ -126,17 +127,15 @@ public class FriendshipService {
             new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    Notification notification = new Notification();
-                    notification.setInfo(new LinkedHashMap<>(Map.ofEntries(
-                        Map.entry("senderUsername", from.getUsername()),
-                        Map.entry("senderFullName", from.getFullName())
-                    )));
-                    notification.setReceiver(to);
-                    notification.setType(FRIENDSHIP_REQUEST);
+                    Map<String, Object> info = new LinkedHashMap<>();
+                    info.put("senderUsername", from.getUsername());
+                    info.put("senderFullName", from.getFullName());
                     
                     // When client click on the notification, it should
-                    // be forward to friendship requests tab.
-                    notificationService.sendToUser(notification);
+                    // be forwarded to friendship requests tab.
+                    notificationService.sendToUser(new NotificationInfo(
+                        info, to.getId(), FRIENDSHIP_REQUEST
+                    ));
                 }
             }
         );
@@ -162,17 +161,15 @@ public class FriendshipService {
                 new TransactionSynchronization() {
                     @Override
                     public void afterCommit() {
-                        Notification notification = new Notification();
-                        notification.setInfo(new LinkedHashMap<>(Map.ofEntries(
-                            Map.entry("acceptorUsername", friendship.getTo().getUsername()),
-                            Map.entry("acceptorFullName", friendship.getTo().getFullName())
-                        )));
-                        notification.setReceiver(friendship.getFrom());
-                        notification.setType(FRIENDSHIP_ACCEPTED);
+                        Map<String, Object> info = new LinkedHashMap<>();
+                        info.put("acceptorUsername", friendship.getTo().getUsername());
+                        info.put("acceptorFullName", friendship.getTo().getFullName());
                         
                         // When client click on the notification, it should
                         // be forward to the friend profile.
-                        notificationService.sendToUser(notification);
+                        notificationService.sendToUser(new NotificationInfo(
+                            info, friendship.getFrom().getId(), FRIENDSHIP_ACCEPTED
+                        ));
                     }
                 }
             );

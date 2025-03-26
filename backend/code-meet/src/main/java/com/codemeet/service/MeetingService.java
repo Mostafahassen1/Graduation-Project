@@ -137,19 +137,17 @@ public class MeetingService {
                 @Override
                 public void afterCommit() {
                     for (Participant participant : participants) {
-                        Notification notification = new Notification();
-                        notification.setInfo(new LinkedHashMap<>(Map.ofEntries(
-                            Map.entry("creatorUsername", creator.getUsername()),
-                            Map.entry("creatorFullName", creator.getFullName()),
-                            Map.entry("meetingTitle", scheduledMeeting.getTitle()),
-                            Map.entry("startsAt", scheduledMeeting.getStartsAt().toString())
-                        )));
-                        notification.setType(SCHEDULED_MEETING);
-                        notification.setReceiver(participant.getUser());
+                        Map<String, Object> info = new LinkedHashMap<>();
+                        info.put("creatorUsername", creator.getUsername());
+                        info.put("creatorFullName", creator.getFullName());
+                        info.put("meetingTitle", scheduledMeeting.getTitle());
+                        info.put("startsAt", scheduledMeeting.getStartsAt());
                         
                         // When user clicks on the notification, it should
                         // be forwarded to the scheduled meetings tab...
-                        notificationService.sendToUser(notification);
+                        notificationService.sendToUser(new NotificationInfo(
+                            info, participant.getUser().getId(), SCHEDULED_MEETING
+                        ));
                     }
                 }
             }

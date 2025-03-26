@@ -1,14 +1,8 @@
 package com.codemeet.service;
 
-import com.codemeet.entity.Membership;
-import com.codemeet.entity.MembershipStatus;
-import com.codemeet.entity.Room;
-import com.codemeet.entity.User;
+import com.codemeet.entity.*;
 import com.codemeet.repository.MembershipRepository;
-import com.codemeet.utils.dto.MembershipInfoResponse;
-import com.codemeet.utils.dto.MembershipRequest;
-import com.codemeet.utils.dto.RoomInfoResponse;
-import com.codemeet.utils.dto.UserInfoResponse;
+import com.codemeet.utils.dto.*;
 import com.codemeet.utils.exception.DuplicateResourceException;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import com.codemeet.utils.exception.IllegalActionException;
@@ -16,22 +10,32 @@ import com.codemeet.utils.exception.ResourceType;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.codemeet.entity.NotificationType.MEMBERSHIP_ACCEPTED;
+import static com.codemeet.entity.NotificationType.MEMBERSHIP_REQUEST;
 
 @Service
 public class MembershipService {
     
     private final MembershipRepository membershipRepository;
+    private final NotificationService notificationService;
     private final UserService userService;
     private final RoomService roomService;
     
     public MembershipService(
         MembershipRepository membershipRepository,
+        NotificationService notificationService,
         UserService userService,
         @Lazy RoomService roomService
     ) {
         this.membershipRepository = membershipRepository;
+        this.notificationService = notificationService;
         this.userService = userService;
         this.roomService = roomService;
     }
@@ -101,6 +105,25 @@ public class MembershipService {
             membership.setStatus(MembershipStatus.ADMIN);
         } else {
             membership.setStatus(MembershipStatus.PENDING);
+            TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        Map<String, Object> info = new LinkedHashMap<>();
+                        info.put("roomId", membership.getRoom().getId());
+                        info.put("roomName", membership.getRoom().getName());
+                        info.put("requesterId", user.getId());
+                        info.put("requesterName", user.getFullName());
+                        info.put("requesterUsername", user.getUsername());
+                        
+                        // When client clicks on the notification, it should
+                        // be forwarded to room membership requests.
+                        notificationService.sendToUser(new NotificationInfo(
+                            info, room.getCreator().getId(), MEMBERSHIP_REQUEST
+                        ));
+                    }
+                }
+            );
             //TODO: Send notification to `admin`...
         }
 
@@ -108,15 +131,29 @@ public class MembershipService {
     }
     
     @Transactional
-    public boolean acceptMembership(int membershipId) {
+    public void acceptMembership(int membershipId) {
         Membership membership = getMembershipEntity(membershipId);
         membership.setStatus(MembershipStatus.ACCEPTED);
-        //TODO: Send notification to `membership.getUser()`...
-        return true;
+        TransactionSynchronizationManager.registerSynchronization(
+            new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    Map<String, Object> info = new LinkedHashMap<>();
+                    info.put("roomId", membership.getRoom().getId());
+                    info.put("roomName", membership.getRoom().getName());
+                    
+                    // When client clicks on the notification, it should
+                    // be forwarded to room view.
+                    notificationService.sendToUser(new NotificationInfo(
+                        info, membership.getUser().getId(), MEMBERSHIP_ACCEPTED
+                    ));
+                }
+            }
+        );
     }
     
     @Transactional
-    public boolean cancelMembership(int membershipId) {
+    public void cancelMembership(int membershipId) {
         Membership membership = getMembershipEntity(membershipId);
 
         if (membership.getStatus().equals(MembershipStatus.ADMIN)) {
@@ -125,6 +162,5 @@ public class MembershipService {
         }
 
         membershipRepository.deleteById(membershipId);
-        return true;
     }
 }
