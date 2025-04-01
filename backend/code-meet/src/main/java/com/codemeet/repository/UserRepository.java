@@ -1,6 +1,6 @@
 package com.codemeet.repository;
 
-import java.util.List;
+
 import java.util.Optional;
 
 import com.codemeet.entity.User;
@@ -11,7 +11,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByUsername(String username);
     
     Optional<User> findByEmail(String email);
-    
+
     boolean existsByUsername(String username);
     
     boolean existsByEmail(String email);

@@ -2,6 +2,7 @@ package com.codemeet.controller;
 
 import java.util.List;
 
+import com.codemeet.entity.User;
 import com.codemeet.utils.dto.UserUpdateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,11 @@ public class UserController {
     public ResponseEntity<UserInfoResponse> getUserById(@PathVariable int id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
-
+    
+    @GetMapping("/current")
+    public ResponseEntity<User> getCurrentUser() {
+        return ResponseEntity.ok(userService.getCurrentUser() );
+    }
     @GetMapping
     public ResponseEntity<UserInfoResponse> getUsersByName(
         @RequestParam String username

@@ -3,6 +3,7 @@ package com.codemeet.service;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import com.codemeet.security.CurrentClient;
 import com.codemeet.utils.dto.UserInfoResponse;
 import com.codemeet.utils.dto.UserUpdateRequest;
 import com.codemeet.utils.exception.EntityNotFoundException;
@@ -24,12 +25,25 @@ public class UserService {
     public boolean exists(int userId) {
         return userRepository.existsById(userId);
     }
+
+    public User saveUserEntity( String firstName, String lastName, String username, String email, String password, String phoneNumber, String profilePictureUrl) {
+         User user = new User( firstName, lastName, username, email, password, phoneNumber, profilePictureUrl);
+        return userRepository.save(user);
+    }
     
     public User getUserEntityById(int id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                     "User with id '%d' not found".formatted(id)));
     }
+
+     public User getCurrentUser() {
+         CurrentClient user = new CurrentClient();
+         String username = user.getNickName();
+         System.out.println("username From Service : ==>  " + username);
+        return getUserEntityByUsername(username);
+    }
+
 
     public User getUserEntityByUsername(String username) {
         return userRepository.findByUsername(username)
