@@ -30,4 +30,19 @@ public interface RoomChatRepository extends JpaRepository<RoomChat, Integer> {
         """
     )
     List<RoomChat> findAllByUserId(Integer userId);
+    
+    @Query(
+        """
+        SELECT :chatId IN(
+            SELECT rc.id
+            FROM RoomChat rc
+            WHERE rc.room.id IN (
+                SELECT ms.room.id
+                FROM Membership ms
+                WHERE ms.user.id = :userId
+            )
+        )
+        """
+    )
+    boolean isMember(Integer userId, Integer chatId);
 }

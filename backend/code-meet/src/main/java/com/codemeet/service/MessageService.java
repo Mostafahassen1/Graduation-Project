@@ -5,6 +5,7 @@ import com.codemeet.entity.Message;
 import com.codemeet.entity.User;
 import com.codemeet.repository.MessageRepository;
 import com.codemeet.utils.dto.chat.MessageInfo;
+import com.codemeet.utils.exception.IllegalActionException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,13 @@ public class MessageService {
     public synchronized MessageInfo save(MessageInfo messageInfo) {
         Chat chat = roomChatService.getRoomChatEntityById(messageInfo.chatId());
         User sender = userService.getUserEntityById(messageInfo.senderId());
+        
+        //TODO: Check if the sender is a member of this chat.
+        if (!roomChatService.isMemberOfChat(sender.getId(), chat.getId())) {
+            throw new IllegalActionException(
+                "User with id '%d' is not member of chat with id '%d'"
+                    .formatted(sender.getId(), chat.getId()));
+        }
         
         Message message = save(new Message(chat, sender, messageInfo.content()));
         chat.setLastSentMessage(message);

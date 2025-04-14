@@ -1,8 +1,8 @@
 package com.codemeet.controller;
 
 import com.codemeet.service.FriendshipService;
+import com.codemeet.utils.dto.FriendshipInfoResponse;
 import com.codemeet.utils.dto.FriendshipRequest;
-import com.codemeet.utils.dto.FriendshipResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +19,31 @@ public class FriendshipController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<FriendshipResponse>> getAllFriendships(
+    public ResponseEntity<List<FriendshipInfoResponse>> getAllFriendships(
         @PathVariable Integer userId
     ) {
         return ResponseEntity.ok(friendshipService.getAllFriendships(userId));
+    }
+    
+    @GetMapping("/accepted/{userId}")
+    public ResponseEntity<List<FriendshipInfoResponse>> getAllAcceptedFriendships(
+        @PathVariable Integer userId
+    ) {
+        return ResponseEntity.ok(friendshipService.getAllAcceptedFriendships(userId));
+    }
+    
+    @GetMapping("/pending/{userId}/sent")
+    public ResponseEntity<List<FriendshipInfoResponse>> getAllPendingSentFriendships(
+        @PathVariable Integer userId
+    ) {
+        return ResponseEntity.ok(friendshipService.getAllPendingSentFriendships(userId));
+    }
+    
+    @GetMapping("/pending/{userId}/received")
+    public ResponseEntity<List<FriendshipInfoResponse>> getAllPendingReceivedFriendships(
+        @PathVariable Integer userId
+    ) {
+        return ResponseEntity.ok(friendshipService.getAllPendingReceivedFriendships(userId));
     }
 
     @PostMapping("/request")
@@ -31,8 +52,7 @@ public class FriendshipController {
     ) {
         return ResponseEntity.ok(friendshipService.askFriendshipRequest(friendshipRequest));
     }
-
-    //handles three cases
+    
     @DeleteMapping("/cancel/{friendshipId}")
     public ResponseEntity<Void> cancelFriendship(
         @PathVariable Integer friendshipId
@@ -47,26 +67,5 @@ public class FriendshipController {
     ) {
         friendshipService.acceptFriendshipRequest(friendshipId);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/accepted/{userId}")
-    public ResponseEntity<List<FriendshipResponse>> getAllAcceptedFriendships(
-        @PathVariable Integer userId
-    ) {
-        return ResponseEntity.ok(friendshipService.getAllAcceptedFriendships(userId));
-    }
-
-    @GetMapping("/pending/{userId}/sent")
-    public ResponseEntity<List<FriendshipResponse>> getAllPendingSentFriendships(
-        @PathVariable Integer userId
-    ) {
-        return ResponseEntity.ok(friendshipService.getAllPendingSentFriendships(userId));
-    }
-
-    @GetMapping("/pending/{userId}/received")
-    public ResponseEntity<List<FriendshipResponse>> getAllPendingReceivedFriendships(
-        @PathVariable Integer userId
-    ) {
-        return ResponseEntity.ok(friendshipService.getAllPendingReceivedFriendships(userId));
     }
 }

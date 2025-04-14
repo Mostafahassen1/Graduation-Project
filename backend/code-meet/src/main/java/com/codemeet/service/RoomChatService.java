@@ -33,6 +33,10 @@ public class RoomChatService {
         return roomChatRepository.findAllByUserId(userId);
     }
     
+    public boolean isMemberOfChat(Integer userId, Integer chatId) {
+        return roomChatRepository.isMember(userId, chatId);
+    }
+    
     public RoomChatInfoResponse getRoomChatById(Integer chatId) {
         return RoomChatInfoResponse.of(getRoomChatEntityById(chatId));
     }

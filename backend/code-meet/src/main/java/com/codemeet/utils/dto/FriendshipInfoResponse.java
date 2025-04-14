@@ -5,7 +5,7 @@ import com.codemeet.entity.FriendshipStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record FriendshipResponse(
+public record FriendshipInfoResponse(
     @NotNull
     Integer friendshipId,
 
@@ -27,9 +27,9 @@ public record FriendshipResponse(
     FriendshipStatus status
 ) {
 
-    public static FriendshipResponse of(Friendship f, Integer userId) {
+    public static FriendshipInfoResponse of(Friendship f, Integer userId) {
         return f.getFrom().getId().equals(userId) ?
-            new FriendshipResponse(
+            new FriendshipInfoResponse(
                 f.getId(),
                 f.getTo().getFirstName(),
                 f.getTo().getLastName(),
@@ -37,7 +37,7 @@ public record FriendshipResponse(
                 f.getTo().getProfilePictureUrl(),
                 f.getStatus()
             ) :
-            new FriendshipResponse(
+            new FriendshipInfoResponse(
                 f.getId(),
                 f.getFrom().getFirstName(),
                 f.getFrom().getLastName(),

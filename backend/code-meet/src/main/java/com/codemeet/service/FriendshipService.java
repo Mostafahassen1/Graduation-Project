@@ -2,8 +2,8 @@ package com.codemeet.service;
 
 import com.codemeet.entity.*;
 import com.codemeet.repository.FriendshipRepository;
+import com.codemeet.utils.dto.FriendshipInfoResponse;
 import com.codemeet.utils.dto.FriendshipRequest;
-import com.codemeet.utils.dto.FriendshipResponse;
 import com.codemeet.utils.dto.NotificationInfo;
 import com.codemeet.utils.exception.DuplicateResourceException;
 import com.codemeet.utils.exception.EntityNotFoundException;
@@ -71,25 +71,25 @@ public class FriendshipService {
         return friendshipRepository.findAllPendingReceivedByUserId(userId);
     }
 
-    public List<FriendshipResponse> getAllFriendships(Integer userId) {
+    public List<FriendshipInfoResponse> getAllFriendships(Integer userId) {
         return getAllFriendshipEntities(userId).stream()
-            .map(f -> FriendshipResponse.of(f, userId))
+            .map(f -> FriendshipInfoResponse.of(f, userId))
             .toList();
     }
 
-    public List<FriendshipResponse> getAllAcceptedFriendships(Integer userId) {
+    public List<FriendshipInfoResponse> getAllAcceptedFriendships(Integer userId) {
         return friendshipRepository.getAllFriends(userId);
     }
 
-    public List<FriendshipResponse> getAllPendingSentFriendships(Integer userId) {
+    public List<FriendshipInfoResponse> getAllPendingSentFriendships(Integer userId) {
         return getAllPendingSentFriendshipEntities(userId).stream()
-            .map(f -> FriendshipResponse.of(f, userId))
+            .map(f -> FriendshipInfoResponse.of(f, userId))
             .toList();
     }
 
-    public List<FriendshipResponse> getAllPendingReceivedFriendships(Integer userId) {
+    public List<FriendshipInfoResponse> getAllPendingReceivedFriendships(Integer userId) {
         return getAllPendingReceivedFriendshipEntities(userId).stream()
-            .map(f -> FriendshipResponse.of(f, userId))
+            .map(f -> FriendshipInfoResponse.of(f, userId))
             .toList();
     }
 

@@ -17,7 +17,6 @@ public record MessageInfo(
     @NotBlank
     String content,
     
-    @NotNull
     Instant sentAt
 ) {
     

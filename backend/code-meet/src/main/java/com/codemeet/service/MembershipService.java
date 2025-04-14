@@ -75,9 +75,11 @@ public class MembershipService {
     }
     
     public List<RoomInfoResponse> getAllRoomsOfUser(int userId) {
-        return getAllRoomEntitiesOfUser(userId).stream()
+        List<RoomInfoResponse> rooms = getAllRoomEntitiesOfUser(userId).stream()
             .map(RoomInfoResponse::of)
             .toList();
+        System.out.println(rooms);
+        return rooms;
     }
     
     public List<UserInfoResponse> getAllUsersOfRoom(int roomId) {
