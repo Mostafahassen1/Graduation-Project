@@ -12,7 +12,7 @@ public record RoomChatInfoResponse(
     RoomInfoResponse roomInfo,
     
     @NotNull
-    MessageInfo messageInfo
+    MessageInfo lastSentMessageInfo
 ) {
     
     public static RoomChatInfoResponse of(RoomChat chat) {

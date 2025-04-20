@@ -1,6 +1,7 @@
 package com.codemeet.utils.dto.chat;
 
 import com.codemeet.entity.Message;
+import com.codemeet.entity.MessageType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -17,6 +18,9 @@ public record MessageInfo(
     @NotBlank
     String content,
     
+    @NotNull
+    MessageType type,
+    
     Instant sentAt
 ) {
     
@@ -25,6 +29,7 @@ public record MessageInfo(
             message.getChat().getId(),
             message.getSender().getId(),
             message.getContent(),
+            message.getType(),
             message.getSentAt()
         );
     }

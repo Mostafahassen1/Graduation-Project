@@ -2,6 +2,7 @@ package com.codemeet.service;
 
 import com.codemeet.entity.Chat;
 import com.codemeet.entity.Message;
+import com.codemeet.entity.MessageType;
 import com.codemeet.entity.User;
 import com.codemeet.repository.MessageRepository;
 import com.codemeet.utils.dto.chat.MessageInfo;
@@ -15,16 +16,22 @@ import java.util.List;
 public class MessageService {
 
     private final MessageRepository messageRepository;
+    private final ChatService chatService;
     private final RoomChatService roomChatService;
+    private final PeerChatService peerChatService;
     private final UserService userService;
 
     public MessageService(
         MessageRepository messageRepository,
+        ChatService chatService,
         RoomChatService roomChatService,
+        PeerChatService peerChatService,
         UserService userService
     ) {
         this.messageRepository = messageRepository;
+        this.chatService = chatService;
         this.roomChatService = roomChatService;
+        this.peerChatService = peerChatService;
         this.userService = userService;
     }
     
@@ -42,20 +49,26 @@ public class MessageService {
     
     @Transactional
     public synchronized MessageInfo save(MessageInfo messageInfo) {
-        Chat chat = roomChatService.getRoomChatEntityById(messageInfo.chatId());
+        Chat chat = chatService.getChatEntityById(messageInfo.chatId());
         User sender = userService.getUserEntityById(messageInfo.senderId());
         
-        //TODO: Check if the sender is a member of this chat.
-        if (!roomChatService.isMemberOfChat(sender.getId(), chat.getId())) {
-            throw new IllegalActionException(
-                "User with id '%d' is not member of chat with id '%d'"
-                    .formatted(sender.getId(), chat.getId()));
+        Message message =
+            new Message(chat, sender, messageInfo.content(), messageInfo.type());
+        
+        if (message.getType() == MessageType.ROOM_MESSAGE) {
+            //TODO: Check if the sender is a member of this chat.
+            if (!roomChatService.isMemberOfChat(sender.getId(), chat.getId())) {
+                throw new IllegalActionException(
+                    "User with id '%d' is not member of chat with id '%d'"
+                        .formatted(sender.getId(), chat.getId()));
+            }
+        } else {
+        
         }
         
-        Message message = save(new Message(chat, sender, messageInfo.content()));
         chat.setLastSentMessage(message);
         
-        return MessageInfo.of(message);
+        return MessageInfo.of(messageRepository.save(message));
     }
     
     public List<MessageInfo> getAllMessagesOfRoom(Integer roomId) {

@@ -1,7 +1,6 @@
 package com.codemeet.controller;
 
 import com.codemeet.service.MessageService;
-import com.codemeet.service.RoomChatService;
 import com.codemeet.utils.dto.chat.MessageInfo;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -30,7 +29,7 @@ public class WebSocketController {
         return  message;
     }
     
-    @MessageMapping("/room-chat")
+    @MessageMapping("/chat")
     public void sendToRoom(@Payload MessageInfo messageInfo) {
         messageInfo = messageService.save(messageInfo);
         

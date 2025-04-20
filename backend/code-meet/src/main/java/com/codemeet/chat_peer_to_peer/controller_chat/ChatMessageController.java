@@ -27,22 +27,22 @@ public class ChatMessageController {
         this.chatMessageService = chatMessageService;
     }
 
-    @MessageMapping("/chat")
-    public void processMessage(@Payload ChatMessage chatMessage) {
-
-//        System.out.println("--------------------");
-//        System.out.println(chatMessage.getMessage() );
-//        System.out.println(chatMessage.getSender() );
-//        System.out.println(chatMessage.getReceiver());
-//        System.out.println("---------------------");
-
-        String receiverUsername = chatMessage.getReceiver().getUsername();
-
-        ChatMessage savedMsg = chatMessageService.save(chatMessage);
-        messagingTemplate.convertAndSendToUser(
-                receiverUsername, "/queue/messages",savedMsg );
-      //  System.out.println( "the message from /chat is: to save MSg " );
-    }
+//    @MessageMapping("/chat")
+//    public void processMessage(@Payload ChatMessage chatMessage) {
+//
+////        System.out.println("--------------------");
+////        System.out.println(chatMessage.getMessage() );
+////        System.out.println(chatMessage.getSender() );
+////        System.out.println(chatMessage.getReceiver());
+////        System.out.println("---------------------");
+//
+//        String receiverUsername = chatMessage.getReceiver().getUsername();
+//
+//        ChatMessage savedMsg = chatMessageService.save(chatMessage);
+//        messagingTemplate.convertAndSendToUser(
+//                receiverUsername, "/queue/messages",savedMsg );
+//      //  System.out.println( "the message from /chat is: to save MSg " );
+//    }
 
 // Mostafa
    @GetMapping("/messages/{senderId}/{recipientId}")

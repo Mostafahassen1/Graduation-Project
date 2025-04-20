@@ -2,6 +2,7 @@ package com.codemeet.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
@@ -25,6 +26,10 @@ public class Message {
     @Column(nullable = false)
     private String content;
     
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private MessageType type;
+    
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Instant sentAt;
@@ -32,10 +37,11 @@ public class Message {
     public Message() {
     }
     
-    public Message(Chat chat, User sender, String content) {
+    public Message(Chat chat, User sender, String content, MessageType type) {
         this.chat = chat;
         this.sender = sender;
         this.content = content;
+        this.type = type;
     }
     
     public Integer getId() {
@@ -50,6 +56,14 @@ public class Message {
         this.chat = chat;
     }
     
+    public User getSender() {
+        return sender;
+    }
+    
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
+    
     public String getContent() {
         return content;
     }
@@ -58,12 +72,12 @@ public class Message {
         this.content = content;
     }
     
-    public User getSender() {
-        return sender;
+    public MessageType getType() {
+        return type;
     }
     
-    public void setSender(User sender) {
-        this.sender = sender;
+    public void setType(MessageType type) {
+        this.type = type;
     }
     
     public Instant getSentAt() {
