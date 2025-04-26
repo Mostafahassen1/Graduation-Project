@@ -1,8 +1,9 @@
 package com.codemeet.service;
 
 import com.codemeet.entity.Notification;
+import com.codemeet.entity.User;
 import com.codemeet.repository.NotificationRepository;
-import com.codemeet.utils.dto.NotificationResponse;
+import com.codemeet.utils.dto.NotificationInfo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -27,20 +28,24 @@ public class NotificationService {
     public Notification save(Notification notification) {
         return notificationRepository.save(notification);
     }
-    
-    public List<Notification> saveAll(List<Notification> notifications) {
-        return notificationRepository.saveAll(notifications);
+
+    public List<Notification> getNotifications(Integer userId) {
+        List<Notification> notifications = notificationRepository.getNotifications(userId);
+        return notifications;
     }
     
-    public void sendToUser(String destination, Notification notification) {
+    public void sendToUser(String destination, NotificationInfo notification) {
         messagingTemplate.convertAndSendToUser( // Maps to /user/{userId}/notification
-            notification.getReceiver().getId().toString(),
-            destination,
-            NotificationResponse.of(notification)
-        );
+            notification.receiverId().toString(), destination, notification);
     }
     
-    public void sendToUser(Notification notification) {
+    public void sendToUser(NotificationInfo notification) {
         sendToUser(DEFAULT_DESTINATION, notification);
+    }
+    
+    public void sendToUsers(Iterable<NotificationInfo> notifications) {
+        for (NotificationInfo notification : notifications) {
+            sendToUser(notification);
+        }
     }
 }

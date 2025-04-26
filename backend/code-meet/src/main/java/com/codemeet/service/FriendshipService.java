@@ -2,8 +2,9 @@ package com.codemeet.service;
 
 import com.codemeet.entity.*;
 import com.codemeet.repository.FriendshipRepository;
+import com.codemeet.utils.dto.FriendshipInfoResponse;
 import com.codemeet.utils.dto.FriendshipRequest;
-import com.codemeet.utils.dto.FriendshipResponse;
+import com.codemeet.utils.dto.NotificationInfo;
 import com.codemeet.utils.exception.DuplicateResourceException;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import com.codemeet.utils.exception.IllegalActionException;
@@ -13,8 +14,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import static com.codemeet.entity.FriendshipStatus.ACCEPTED;
+import static com.codemeet.entity.FriendshipStatus.PENDING;
+import static com.codemeet.entity.NotificationType.FRIENDSHIP_REQUEST;
+import static com.codemeet.entity.NotificationType.FRIENDSHIP_ACCEPTED;
 
 @Service
 public class FriendshipService {
@@ -22,15 +30,21 @@ public class FriendshipService {
     private final FriendshipRepository friendshipRepository;
     private final NotificationService notificationService;
     private final UserService userService;
+    private final ChatService chatService;
 
     public FriendshipService(
         FriendshipRepository friendshipRepository,
         NotificationService notificationService,
-        UserService userService
+        UserService userService, ChatService chatService
     ) {
         this.friendshipRepository = friendshipRepository;
         this.notificationService = notificationService;
         this.userService = userService;
+        this.chatService = chatService;
+    }
+    
+    public boolean exists(Integer fromId, Integer toId) {
+        return friendshipRepository.exists(fromId, toId);
     }
 
     public Friendship getFriendshipEntityById(Integer friendshipId) {
@@ -66,25 +80,25 @@ public class FriendshipService {
         return friendshipRepository.findAllPendingReceivedByUserId(userId);
     }
 
-    public List<FriendshipResponse> getAllFriendships(Integer userId) {
+    public List<FriendshipInfoResponse> getAllFriendships(Integer userId) {
         return getAllFriendshipEntities(userId).stream()
-            .map(f -> FriendshipResponse.of(f, userId))
+            .map(f -> FriendshipInfoResponse.of(f, userId))
             .toList();
     }
 
-    public List<FriendshipResponse> getAllAcceptedFriendships(Integer userId) {
+    public List<FriendshipInfoResponse> getAllAcceptedFriendships(Integer userId) {
         return friendshipRepository.getAllFriends(userId);
     }
 
-    public List<FriendshipResponse> getAllPendingSentFriendships(Integer userId) {
+    public List<FriendshipInfoResponse> getAllPendingSentFriendships(Integer userId) {
         return getAllPendingSentFriendshipEntities(userId).stream()
-            .map(f -> FriendshipResponse.of(f, userId))
+            .map(f -> FriendshipInfoResponse.of(f, userId))
             .toList();
     }
 
-    public List<FriendshipResponse> getAllPendingReceivedFriendships(Integer userId) {
+    public List<FriendshipInfoResponse> getAllPendingReceivedFriendships(Integer userId) {
         return getAllPendingReceivedFriendshipEntities(userId).stream()
-            .map(f -> FriendshipResponse.of(f, userId))
+            .map(f -> FriendshipInfoResponse.of(f, userId))
             .toList();
     }
 
@@ -114,23 +128,23 @@ public class FriendshipService {
         User from = userService.getUserEntityById(friendshipRequest.fromId());
         User to = userService.getUserEntityById(friendshipRequest.toId());
 
-        Friendship f = new Friendship(from, to, FriendshipStatus.PENDING);
+        Friendship f = new Friendship(from, to, PENDING);
         friendshipRepository.save(f);
 
         // Sending notification...
-        Notification notification = new Notification();
-        
-        notification.setMessage("%s (%s) sent you a friendship request"
-            .formatted(f.getFrom().getFullName(), f.getFrom().getUsername()));
-        notification.setReceiver(to);
-        
-        notificationService.save(notification);
-        
         TransactionSynchronizationManager.registerSynchronization(
             new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    notificationService.sendToUser(notification);
+                    Map<String, Object> info = new LinkedHashMap<>();
+                    info.put("senderUsername", from.getUsername());
+                    info.put("senderFullName", from.getFullName());
+                    
+                    // When the client clicks on the notification, it should
+                    // be forwarded to the friendship requests tab.
+                    notificationService.sendToUser(new NotificationInfo(
+                        info, to.getId(), FRIENDSHIP_REQUEST
+                    ));
                 }
             }
         );
@@ -146,30 +160,40 @@ public class FriendshipService {
 
     @Transactional
     public void acceptFriendshipRequest(Integer friendshipId) {
-        Friendship f = getFriendshipEntityById(friendshipId);
+        Friendship friendship = getFriendshipEntityById(friendshipId);
 
-        if (f.getStatus() == FriendshipStatus.PENDING) {
-            f.setStatus(FriendshipStatus.ACCEPTED);
+        if (friendship.getStatus() == PENDING) {
+            friendship.setStatus(ACCEPTED);
             
-            // Sending notification...
-            Notification notification = new Notification();
-            
-            notification.setMessage("%s (%s) accepted your friendship request"
-                .formatted(f.getTo().getFullName(), f.getTo().getUsername()));
-            notification.setReceiver(f.getFrom());
-            
-            notificationService.save(notification);
-            
+            // Send notification...
             TransactionSynchronizationManager.registerSynchronization(
                 new TransactionSynchronization() {
                     @Override
                     public void afterCommit() {
-                        notificationService.sendToUser(notification);
+                        Map<String, Object> info = new LinkedHashMap<>();
+                        info.put("acceptorUsername", friendship.getTo().getUsername());
+                        info.put("acceptorFullName", friendship.getTo().getFullName());
+                        
+                        // When the client clicks on the notification, it should
+                        // be forward to the friend profile.
+                        notificationService.sendToUser(new NotificationInfo(
+                            info, friendship.getFrom().getId(), FRIENDSHIP_ACCEPTED
+                        ));
                     }
                 }
             );
             
-            //TODO: create chat between them...
+            // Create a chat between them...
+            PeerChat pc1 = new PeerChat();
+            PeerChat pc2 = new PeerChat();
+            
+            pc1.setOwner(friendship.getFrom());
+            pc1.setPeer(friendship.getTo());
+            
+            pc2.setOwner(friendship.getTo());
+            pc2.setPeer(friendship.getFrom());
+            
+            chatService.saveAll(List.of(pc1, pc2));
         } else {
             throw new IllegalActionException(
                 "Friendship status should be PENDING in order to be accepted");

@@ -42,6 +42,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(BAD_REQUEST).body(info);
     }
     
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, String>> handleAuthenticationException(
+        AuthenticationException e
+    ) {
+        Map<String, String> info = new LinkedHashMap<>();
+        info.put("error", e.getMessage());
+        return ResponseEntity.status(UNAUTHORIZED).body(info);
+    }
+    
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<Map<String, String>> handleMissingRequestParameterException(
         MissingServletRequestParameterException e

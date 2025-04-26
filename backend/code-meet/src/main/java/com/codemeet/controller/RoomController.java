@@ -25,7 +25,9 @@ public class RoomController {
     }
     
     @GetMapping("/all/{userId}")
-    public ResponseEntity<List<RoomInfoResponse>> getAllRoomsByCreator(@PathVariable Integer userId) {
+    public ResponseEntity<List<RoomInfoResponse>> getAllRoomsByCreator(
+        @PathVariable Integer userId
+    ) {
         return ResponseEntity.ok(roomService.getAllRoomsByCreator(userId));
     }
     
@@ -33,6 +35,7 @@ public class RoomController {
     public ResponseEntity<RoomInfoResponse> createRoom(
         @RequestBody RoomCreationRequest creationRequest
     ) {
+        // The client should subscribe to /chat/{chatId} after completion...
         return ResponseEntity.ok(roomService.createRoom(creationRequest));
     }
     

@@ -14,6 +14,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.time.Instant;
 import java.util.*;
 
+import static com.codemeet.entity.NotificationType.SCHEDULED_MEETING;
+
 @Service
 public class MeetingService {
 
@@ -116,7 +118,7 @@ public class MeetingService {
 
         meetingRepository.save(scheduledMeeting);
 
-        // Add participants and creator to list of participants
+        // Add participants and creator to a list of participants
         List<Participant> participants = new ArrayList<>(
             scheduledMeetingRequest.participants().stream()
                 .map(username -> new Participant(
@@ -129,40 +131,30 @@ public class MeetingService {
 
         participantRepository.saveAll(participants);
 
-        // Send notifications to participants...
-        List<Notification> notifications = new ArrayList<>();
-        for (Participant p : participants) {
-            Notification notification = new Notification();
-            
-            notification.setMessage(
-                "'%s' (%s) invited you to a new meeting (%s) at %s"
-                    .formatted(
-                        scheduledMeeting.getCreator().getFullName(),
-                        scheduledMeeting.getCreator().getUsername(),
-                        scheduledMeeting.getTitle(),
-                        scheduledMeeting.getStartsAt()
-                    )
-            );
-            notification.setReceiver(p.getUser());
-            
-            notifications.add(notification);
-        }
-        
-        notificationService.saveAll(notifications);
-        
+        // Send notifications to all participants...
         TransactionSynchronizationManager.registerSynchronization(
             new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    for (Notification notification : notifications) {
-                        notificationService.sendToUser(notification);
+                    for (Participant participant : participants) {
+                        Map<String, Object> info = new LinkedHashMap<>();
+                        info.put("creatorUsername", creator.getUsername());
+                        info.put("creatorFullName", creator.getFullName());
+                        info.put("meetingTitle", scheduledMeeting.getTitle());
+                        info.put("startsAt", scheduledMeeting.getStartsAt());
+                        
+                        // When a user clicks on the notification, it should
+                        // be forwarded to the scheduled meetings tab...
+                        notificationService.sendToUser(new NotificationInfo(
+                            info, participant.getUser().getId(), SCHEDULED_MEETING
+                        ));
                     }
                 }
             }
         );
         
         //TODO: Schedule job to run at given time which notifies creator client to start the meeting now
-        //TODO: and notifies all participants that there is a meeting now
+        //TODO: and notifies all participants that there is a meeting now...
 
         return MeetingInfoResponse.of(scheduledMeeting);
     }

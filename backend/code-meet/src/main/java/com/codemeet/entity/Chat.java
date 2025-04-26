@@ -16,5 +16,29 @@ public abstract class Chat {
     private User owner;
     
     @OneToOne
-    private Message lastSent;
+    private Message lastSentMessage;
+    
+    public Integer getId() {
+        return id;
+    }
+    
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
+    public User getOwner() {
+        return owner;
+    }
+    
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+    
+    public Message getLastSentMessage() {
+        return lastSentMessage;
+    }
+    
+    public void setLastSentMessage(Message lastSent) {
+        this.lastSentMessage = lastSent;
+    }
 }

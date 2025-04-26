@@ -1,8 +1,11 @@
 package com.codemeet.entity;
 
+
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.util.Map;
 
 @Entity
 @Table(name = "notifications")
@@ -10,34 +13,41 @@ public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     
-    @Column(nullable = false)
-    private String message;
+    @ElementCollection
+    @CollectionTable(
+        name = "notifications_info",
+        joinColumns = @JoinColumn(name = "notification_id")
+    )
+    @MapKeyColumn(name = "info")
+    @Column(name = "value")
+    private Map<String, String> info;
     
     @ManyToOne
     @JoinColumn(nullable = false)
     private User receiver;
     
     @Column(nullable = false)
-    private Instant sentAt = Instant.now();
+    private NotificationType type;
     
-    @Column(nullable = false)
-    private boolean isRead = false;
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Instant sentAt;
     
     public Notification() {
     }
     
-    public Integer getId() {
+    public int getId() {
         return id;
     }
     
-    public String getMessage() {
-        return message;
+    public Map<String, String> getInfo() {
+        return info;
     }
     
-    public void setMessage(String message) {
-        this.message = message;
+    public void setInfo(Map<String, String> info) {
+        this.info = info;
     }
     
     public User getReceiver() {
@@ -48,19 +58,15 @@ public class Notification {
         this.receiver = receiver;
     }
     
+    public NotificationType getType() {
+        return type;
+    }
+    
+    public void setType(NotificationType type) {
+        this.type = type;
+    }
+    
     public Instant getSentAt() {
         return sentAt;
-    }
-    
-    public void setSentAt(Instant sentAt) {
-        this.sentAt = sentAt;
-    }
-    
-    public boolean isRead() {
-        return isRead;
-    }
-    
-    public void setRead(boolean read) {
-        isRead = read;
     }
 }

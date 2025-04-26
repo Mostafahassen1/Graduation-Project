@@ -12,7 +12,7 @@ public record RoomInfoResponse(
     Instant createdAt,
     String roomPictureUrl
 ) {
-
+    
     public static RoomInfoResponse of(Room room) {
         return new RoomInfoResponse(
             room.getId(),

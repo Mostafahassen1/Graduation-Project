@@ -35,6 +35,13 @@ public interface MembershipRepository extends JpaRepository<Membership, Integer>
         """
     )
     Optional<Membership> findByUserIdAndRoomId(int userId, int roomId);
-
-    boolean existsByUserIdAndRoomId(int userId, int roomId);
+    
+    @Query(
+        """
+        SELECT COUNT(ms) > 0
+        FROM Membership ms
+        WHERE ms.user.id = :userId AND ms.room.id = :roomId
+        """
+    )
+    boolean exists(int userId, int roomId);
 }

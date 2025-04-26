@@ -8,7 +8,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "messages")
-public abstract class Message {
+public class Message {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,14 +44,6 @@ public abstract class Message {
         this.chat = chat;
     }
     
-    public String getContent() {
-        return content;
-    }
-    
-    public void setContent(String content) {
-        this.content = content;
-    }
-    
     public User getSender() {
         return sender;
     }
@@ -60,7 +52,26 @@ public abstract class Message {
         this.sender = sender;
     }
     
+    public String getContent() {
+        return content;
+    }
+    
+    public void setContent(String content) {
+        this.content = content;
+    }
+    
     public Instant getSentAt() {
         return sentAt;
+    }
+    
+    @Override
+    public String toString() {
+        return "[%s\t%s (%s)\t%s]"
+            .formatted(
+                sentAt,
+                sender.getFullName(),
+                sender.getUsername(),
+                content
+            );
     }
 }

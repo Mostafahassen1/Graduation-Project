@@ -1,0 +1,10 @@
+package com.codemeet.entity;
+
+public enum NotificationType {
+    FRIENDSHIP_REQUEST,
+    FRIENDSHIP_ACCEPTED,
+    MEMBERSHIP_REQUEST,
+    MEMBERSHIP_ACCEPTED,
+    SCHEDULED_MEETING,
+    MESSAGE_RECEIVED
+}

@@ -42,12 +42,14 @@ public class MembershipController {
     }
     
     @PatchMapping("/accept/{membershipId}")
-    public ResponseEntity<Boolean> acceptMembership(@PathVariable int membershipId) {
-        return ResponseEntity.ok(membershipService.acceptMembership(membershipId));
+    public ResponseEntity<Void> acceptMembership(@PathVariable int membershipId) {
+        membershipService.acceptMembership(membershipId);
+        return ResponseEntity.noContent().build();
     }
     
     @DeleteMapping("/cancel/{membershipId}")
-    public ResponseEntity<Boolean> cancelMembership(@PathVariable int membershipId) {
-        return ResponseEntity.ok(membershipService.cancelMembership(membershipId));
+    public ResponseEntity<Void> cancelMembership(@PathVariable int membershipId) {
+        membershipService.cancelMembership(membershipId);
+        return ResponseEntity.noContent().build();
     }
 }

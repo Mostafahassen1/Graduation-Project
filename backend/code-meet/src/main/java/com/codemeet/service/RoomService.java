@@ -1,9 +1,7 @@
 package com.codemeet.service;
 
-import com.codemeet.entity.Room;
-import com.codemeet.entity.User;
+import com.codemeet.entity.*;
 import com.codemeet.repository.RoomRepository;
-import com.codemeet.utils.dto.MembershipRequest;
 import com.codemeet.utils.dto.RoomCreationRequest;
 import com.codemeet.utils.dto.RoomInfoResponse;
 import com.codemeet.utils.dto.RoomUpdateRequest;
@@ -19,15 +17,18 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final UserService userService;
     private final MembershipService membershipService;
+    private final ChatService chatService;
     
     public RoomService(
         RoomRepository roomRepository,
         UserService userService,
-        MembershipService membershipService
+        MembershipService membershipService,
+        ChatService chatService
     ) {
         this.roomRepository = roomRepository;
         this.userService = userService;
         this.membershipService = membershipService;
+        this.chatService = chatService;
     }
     
     public boolean exists(int roomId) {
@@ -41,7 +42,7 @@ public class RoomService {
     }
     
     public List<Room> getAllRoomEntities(Integer userId) {
-        return roomRepository.getAllByCreatorId(userId );
+        return roomRepository.findAllByCreatorId(userId );
     }
     
     public Room addRoomEntity(Room room) {
@@ -71,17 +72,24 @@ public class RoomService {
     @Transactional
     public RoomInfoResponse createRoom(RoomCreationRequest creationRequest) {
         User creator = userService.getUserEntityById(creationRequest.creatorId());
-        Room room = new Room(
-            creationRequest.name(),
-            creationRequest.description(),
-            creator,
-            creationRequest.roomPictureUrl()
-        );
-
-        addRoomEntity(room);
-
-        membershipService.requestMembership(
-            new MembershipRequest(room.getCreator().getId(), room.getId()));
+        
+        Room room = new Room();
+        room.setName(creationRequest.name());
+        room.setDescription(creationRequest.description());
+        room.setCreator(creator);
+        room.setRoomPictureUrl(creationRequest.roomPictureUrl());
+        this.addRoomEntity(room);
+        
+        Membership membership = new Membership();
+        membership.setUser(creator);
+        membership.setRoom(room);
+        membership.setStatus(MembershipStatus.ADMIN);
+        membershipService.addMembershipEntity(membership);
+        
+        RoomChat chat = new RoomChat();
+        chat.setOwner(creator);
+        chat.setRoom(room);
+        chatService.save(chat);
 
         return RoomInfoResponse.of(room);
     }
