@@ -1,7 +1,6 @@
 package com.codemeet.service;
 
 import com.codemeet.entity.Notification;
-import com.codemeet.entity.User;
 import com.codemeet.repository.NotificationRepository;
 import com.codemeet.utils.dto.NotificationInfo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

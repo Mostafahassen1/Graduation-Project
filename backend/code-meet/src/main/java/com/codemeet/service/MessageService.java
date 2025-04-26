@@ -2,7 +2,6 @@ package com.codemeet.service;
 
 import com.codemeet.entity.*;
 import com.codemeet.repository.MessageRepository;
-import com.codemeet.utils.dto.NotificationInfo;
 import com.codemeet.utils.dto.chat.MessageInfoRequest;
 import com.codemeet.utils.dto.chat.MessageInfoResponse;
 import com.codemeet.utils.exception.IllegalActionException;
@@ -12,11 +11,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-
-import static com.codemeet.entity.NotificationType.MEMBERSHIP_REQUEST;
 
 @Service
 public class MessageService {
