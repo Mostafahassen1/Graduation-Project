@@ -39,30 +39,30 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Integer>
     
     @Query(
         """
-        SELECT f
-        FROM Friendship f
-        WHERE (f.from.id = :fromId AND f.to.id = :toId)
-        OR (f.from.id = :toId AND f.to.id = :fromId)
+        SELECT fs
+        FROM Friendship fs
+        WHERE (fs.from.id = :fromId AND fs.to.id = :toId)
+        OR (fs.from.id = :toId AND fs.to.id = :fromId)
         """
     )
     Optional<Friendship> findByFromIdAndToId(Integer fromId, Integer toId);
     
     @Query(
         """
-        SELECT f
-        FROM Friendship f
-        WHERE f.from.id = :userId OR f.to.id = :userId
-        ORDER BY f.status
+        SELECT fs
+        FROM Friendship fs
+        WHERE fs.from.id = :userId OR fs.to.id = :userId
+        ORDER BY fs.status
         """
     )
     List<Friendship> findAllByUserId(Integer userId);
     
     @Query(
         """
-        SELECT f
-        FROM Friendship f
-        WHERE (f.from.id = :userId OR f.to.id = :userId)
-        AND f.status = "ACCEPTED"
+        SELECT fs
+        FROM Friendship fs
+        WHERE (fs.from.id = :userId OR fs.to.id = :userId)
+        AND fs.status = "ACCEPTED"
         """
     )
     List<Friendship> findAllAcceptedByUserId(Integer userId);
@@ -70,10 +70,10 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Integer>
     // Finds all friendship requests `sent by` user whose id is `userId`
     @Query(
         """
-        SELECT f
-        FROM Friendship f
-        WHERE f.from.id = :userId
-        AND f.status = "PENDING"
+        SELECT fs
+        FROM Friendship fs
+        WHERE fs.from.id = :userId
+        AND fs.status = "PENDING"
         """
     )
     List<Friendship> findAllPendingSentByUserId(Integer userId);
@@ -81,13 +81,21 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Integer>
     // Finds all friendship requests `sent to` user whose id is `userId`
     @Query(
         """
-        SELECT f
-        FROM Friendship f
-        WHERE f.to.id = :userId
-        AND f.status = "PENDING"
+        SELECT fs
+        FROM Friendship fs
+        WHERE fs.to.id = :userId
+        AND fs.status = "PENDING"
         """
     )
     List<Friendship> findAllPendingReceivedByUserId(Integer userId);
     
-    boolean existsByFromIdAndToId(Integer fromId, Integer toId);
+    @Query(
+        """
+        SELECT COUNT(fs) > 0
+        FROM Friendship fs
+        WHERE (fs.from.id = :fromId AND fs.to.id = :toId)
+        OR (fs.from.id = :toId AND fs.to.id = :fromId)
+        """
+    )
+    boolean exists(Integer fromId, Integer toId);
 }

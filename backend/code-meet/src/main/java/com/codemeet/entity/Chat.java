@@ -11,6 +11,10 @@ public abstract class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private User owner;
+    
     @OneToOne
     private Message lastSentMessage;
     
@@ -20,6 +24,14 @@ public abstract class Chat {
     
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    public User getOwner() {
+        return owner;
+    }
+    
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
     
     public Message getLastSentMessage() {

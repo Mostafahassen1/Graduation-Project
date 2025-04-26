@@ -8,28 +8,16 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "peer_chats")
 public class PeerChat extends Chat {
-
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private User one;
     
     @ManyToOne
     @JoinColumn(nullable = false)
-    private User theOther;
+    private User peer;
     
-    public User getOne() {
-        return one;
+    public User getPeer() {
+        return peer;
     }
     
-    public void setOne(User one) {
-        this.one = one;
-    }
-    
-    public User getTheOther() {
-        return theOther;
-    }
-    
-    public void setTheOther(User theOther) {
-        this.theOther = theOther;
+    public void setPeer(User peer) {
+        this.peer = peer;
     }
 }

@@ -12,14 +12,14 @@ public record RoomChatInfoResponse(
     RoomInfoResponse roomInfo,
     
     @NotNull
-    MessageInfo lastSentMessageInfo
+    MessageInfoRequest lastSentMessageInfo
 ) {
     
     public static RoomChatInfoResponse of(RoomChat chat) {
         return new RoomChatInfoResponse(
             chat.getId(),
             RoomInfoResponse.of(chat.getRoom()),
-            MessageInfo.of(chat.getLastSentMessage())
+            MessageInfoRequest.of(chat.getLastSentMessage())
         );
     }
 }

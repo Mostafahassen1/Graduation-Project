@@ -27,17 +27,24 @@ public class MembershipService {
     private final NotificationService notificationService;
     private final UserService userService;
     private final RoomService roomService;
+    private final ChatService chatService;
     
     public MembershipService(
         MembershipRepository membershipRepository,
         NotificationService notificationService,
         UserService userService,
-        @Lazy RoomService roomService
+        @Lazy RoomService roomService,
+        ChatService chatService
     ) {
         this.membershipRepository = membershipRepository;
         this.notificationService = notificationService;
         this.userService = userService;
         this.roomService = roomService;
+        this.chatService = chatService;
+    }
+    
+    public boolean exists(Integer userId, Integer roomId) {
+        return membershipRepository.exists(userId, roomId);
     }
     
     public Membership getMembershipEntity(int membershipId) {
@@ -93,7 +100,7 @@ public class MembershipService {
         User user = userService.getUserEntityById(joinRequest.userId());
         Room room = roomService.getRoomEntityById(joinRequest.roomId());
 
-        if (membershipRepository.existsByUserIdAndRoomId(user.getId(), room.getId())) {
+        if (this.exists(user.getId(), room.getId())) {
             throw new DuplicateResourceException(
                 "User with id '%d' already exists in room with id '%d'"
                     .formatted(user.getId(), room.getId()), ResourceType.MEMBERSHIP);
@@ -102,40 +109,44 @@ public class MembershipService {
         Membership membership = new Membership();
         membership.setUser(user);
         membership.setRoom(room);
-
-        if (user.getId().equals(room.getCreator().getId())) {
-            membership.setStatus(MembershipStatus.ADMIN);
-        } else {
-            membership.setStatus(MembershipStatus.PENDING);
-            TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                    @Override
-                    public void afterCommit() {
-                        Map<String, Object> info = new LinkedHashMap<>();
-                        info.put("roomId", membership.getRoom().getId());
-                        info.put("roomName", membership.getRoom().getName());
-                        info.put("requesterId", user.getId());
-                        info.put("requesterName", user.getFullName());
-                        info.put("requesterUsername", user.getUsername());
-                        
-                        // When client clicks on the notification, it should
-                        // be forwarded to room membership requests.
-                        notificationService.sendToUser(new NotificationInfo(
-                            info, room.getCreator().getId(), MEMBERSHIP_REQUEST
-                        ));
-                    }
+        membership.setStatus(MembershipStatus.PENDING);
+        this.addMembershipEntity(membership);
+        
+        // Send notification to the admin...
+        TransactionSynchronizationManager.registerSynchronization(
+            new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    Map<String, Object> info = new LinkedHashMap<>();
+                    info.put("roomId", membership.getRoom().getId());
+                    info.put("roomName", membership.getRoom().getName());
+                    info.put("requesterId", user.getId());
+                    info.put("requesterName", user.getFullName());
+                    info.put("requesterUsername", user.getUsername());
+                    
+                    // When the client clicks on the notification, it should
+                    // be forwarded to room membership requests.
+                    notificationService.sendToUser(new NotificationInfo(
+                        info, room.getCreator().getId(), MEMBERSHIP_REQUEST
+                    ));
                 }
-            );
-            //TODO: Send notification to `admin`...
-        }
+            }
+        );
 
-        return MembershipInfoResponse.of(addMembershipEntity(membership));
+        return MembershipInfoResponse.of(membership);
     }
     
     @Transactional
     public void acceptMembership(int membershipId) {
         Membership membership = getMembershipEntity(membershipId);
         membership.setStatus(MembershipStatus.ACCEPTED);
+        
+        RoomChat rc = new RoomChat();
+        rc.setOwner(membership.getUser());
+        rc.setRoom(membership.getRoom());
+        chatService.save(rc);
+        
+        // Send notification to the requester...
         TransactionSynchronizationManager.registerSynchronization(
             new TransactionSynchronization() {
                 @Override
@@ -144,7 +155,7 @@ public class MembershipService {
                     info.put("roomId", membership.getRoom().getId());
                     info.put("roomName", membership.getRoom().getName());
                     
-                    // When client clicks on the notification, it should
+                    // When the client clicks on the notification, it should
                     // be forwarded to room view.
                     notificationService.sendToUser(new NotificationInfo(
                         info, membership.getUser().getId(), MEMBERSHIP_ACCEPTED

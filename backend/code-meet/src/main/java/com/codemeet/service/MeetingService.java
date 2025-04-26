@@ -118,7 +118,7 @@ public class MeetingService {
 
         meetingRepository.save(scheduledMeeting);
 
-        // Add participants and creator to list of participants
+        // Add participants and creator to a list of participants
         List<Participant> participants = new ArrayList<>(
             scheduledMeetingRequest.participants().stream()
                 .map(username -> new Participant(
@@ -143,7 +143,7 @@ public class MeetingService {
                         info.put("meetingTitle", scheduledMeeting.getTitle());
                         info.put("startsAt", scheduledMeeting.getStartsAt());
                         
-                        // When user clicks on the notification, it should
+                        // When a user clicks on the notification, it should
                         // be forwarded to the scheduled meetings tab...
                         notificationService.sendToUser(new NotificationInfo(
                             info, participant.getUser().getId(), SCHEDULED_MEETING

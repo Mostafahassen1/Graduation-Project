@@ -19,7 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.codemeet.entity.NotificationType.*;
+import static com.codemeet.entity.FriendshipStatus.ACCEPTED;
+import static com.codemeet.entity.FriendshipStatus.PENDING;
+import static com.codemeet.entity.NotificationType.FRIENDSHIP_REQUEST;
+import static com.codemeet.entity.NotificationType.FRIENDSHIP_ACCEPTED;
 
 @Service
 public class FriendshipService {
@@ -27,15 +30,21 @@ public class FriendshipService {
     private final FriendshipRepository friendshipRepository;
     private final NotificationService notificationService;
     private final UserService userService;
+    private final ChatService chatService;
 
     public FriendshipService(
         FriendshipRepository friendshipRepository,
         NotificationService notificationService,
-        UserService userService
+        UserService userService, ChatService chatService
     ) {
         this.friendshipRepository = friendshipRepository;
         this.notificationService = notificationService;
         this.userService = userService;
+        this.chatService = chatService;
+    }
+    
+    public boolean exists(Integer fromId, Integer toId) {
+        return friendshipRepository.exists(fromId, toId);
     }
 
     public Friendship getFriendshipEntityById(Integer friendshipId) {
@@ -119,7 +128,7 @@ public class FriendshipService {
         User from = userService.getUserEntityById(friendshipRequest.fromId());
         User to = userService.getUserEntityById(friendshipRequest.toId());
 
-        Friendship f = new Friendship(from, to, FriendshipStatus.PENDING);
+        Friendship f = new Friendship(from, to, PENDING);
         friendshipRepository.save(f);
 
         // Sending notification...
@@ -131,8 +140,8 @@ public class FriendshipService {
                     info.put("senderUsername", from.getUsername());
                     info.put("senderFullName", from.getFullName());
                     
-                    // When client click on the notification, it should
-                    // be forwarded to friendship requests tab.
+                    // When the client clicks on the notification, it should
+                    // be forwarded to the friendship requests tab.
                     notificationService.sendToUser(new NotificationInfo(
                         info, to.getId(), FRIENDSHIP_REQUEST
                     ));
@@ -153,10 +162,10 @@ public class FriendshipService {
     public void acceptFriendshipRequest(Integer friendshipId) {
         Friendship friendship = getFriendshipEntityById(friendshipId);
 
-        if (friendship.getStatus() == FriendshipStatus.PENDING) {
-            friendship.setStatus(FriendshipStatus.ACCEPTED);
+        if (friendship.getStatus() == PENDING) {
+            friendship.setStatus(ACCEPTED);
             
-            // Sending notification...
+            // Send notification...
             TransactionSynchronizationManager.registerSynchronization(
                 new TransactionSynchronization() {
                     @Override
@@ -165,7 +174,7 @@ public class FriendshipService {
                         info.put("acceptorUsername", friendship.getTo().getUsername());
                         info.put("acceptorFullName", friendship.getTo().getFullName());
                         
-                        // When client click on the notification, it should
+                        // When the client clicks on the notification, it should
                         // be forward to the friend profile.
                         notificationService.sendToUser(new NotificationInfo(
                             info, friendship.getFrom().getId(), FRIENDSHIP_ACCEPTED
@@ -174,7 +183,17 @@ public class FriendshipService {
                 }
             );
             
-            //TODO: create chat between them...
+            // Create a chat between them...
+            PeerChat pc1 = new PeerChat();
+            PeerChat pc2 = new PeerChat();
+            
+            pc1.setOwner(friendship.getFrom());
+            pc1.setPeer(friendship.getTo());
+            
+            pc2.setOwner(friendship.getTo());
+            pc2.setPeer(friendship.getFrom());
+            
+            chatService.saveAll(List.of(pc1, pc2));
         } else {
             throw new IllegalActionException(
                 "Friendship status should be PENDING in order to be accepted");

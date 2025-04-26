@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface RoomRepository extends JpaRepository<Room, Integer> {
-    boolean existsById(Integer id);
-
-
-    @Query("""
-            select r from Room r where r.creator.id=:userId
-            """)
-    List<Room> getAllByCreatorId(Integer userId);
+    
+    @Query(
+        """
+        SELECT r
+        FROM Room r
+        WHERE r.creator.id = :creatorId
+        """
+    )
+    List<Room> findAllByCreatorId(Integer creatorId);
 }

@@ -9,21 +9,17 @@ public record PeerChatInfoResponse(
     Integer chatId,
     
     @NotNull
-    UserInfoResponse one,
-
-    @NotNull
-    UserInfoResponse theOther,
+    UserInfoResponse peer,
     
     @NotNull
-    MessageInfo lastSentMessageInfo
+    MessageInfoRequest lastSentMessageInfo
 ) {
     
     public static PeerChatInfoResponse of(PeerChat chat) {
         return new PeerChatInfoResponse(
             chat.getId(),
-            UserInfoResponse.of(chat.getOne()),
-            UserInfoResponse.of(chat.getTheOther()),
-            MessageInfo.of(chat.getLastSentMessage())
+            UserInfoResponse.of(chat.getPeer()),
+            MessageInfoRequest.of(chat.getLastSentMessage())
         );
     }
 }

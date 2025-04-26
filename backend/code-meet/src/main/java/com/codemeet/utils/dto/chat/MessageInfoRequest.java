@@ -1,13 +1,12 @@
 package com.codemeet.utils.dto.chat;
 
 import com.codemeet.entity.Message;
-import com.codemeet.entity.MessageType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
 
-public record MessageInfo(
+public record MessageInfoRequest(
     @NotNull
     Integer chatId,
     
@@ -16,21 +15,14 @@ public record MessageInfo(
     
     @NotNull
     @NotBlank
-    String content,
-    
-    @NotNull
-    MessageType type,
-    
-    Instant sentAt
+    String content
 ) {
     
-    public static MessageInfo of(Message message) {
-        return new MessageInfo(
+    public static MessageInfoRequest of(Message message) {
+        return new MessageInfoRequest(
             message.getChat().getId(),
             message.getSender().getId(),
-            message.getContent(),
-            message.getType(),
-            message.getSentAt()
+            message.getContent()
         );
     }
 }

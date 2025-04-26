@@ -23,7 +23,7 @@ public class RoomService {
         RoomRepository roomRepository,
         UserService userService,
         MembershipService membershipService,
-        RoomChatService roomChatService, ChatService chatService
+        ChatService chatService
     ) {
         this.roomRepository = roomRepository;
         this.userService = userService;
@@ -42,7 +42,7 @@ public class RoomService {
     }
     
     public List<Room> getAllRoomEntities(Integer userId) {
-        return roomRepository.getAllByCreatorId(userId );
+        return roomRepository.findAllByCreatorId(userId );
     }
     
     public Room addRoomEntity(Room room) {
@@ -72,13 +72,13 @@ public class RoomService {
     @Transactional
     public RoomInfoResponse createRoom(RoomCreationRequest creationRequest) {
         User creator = userService.getUserEntityById(creationRequest.creatorId());
-        Room room = new Room(
-            creationRequest.name(),
-            creationRequest.description(),
-            creator,
-            creationRequest.roomPictureUrl()
-        );
-        addRoomEntity(room);
+        
+        Room room = new Room();
+        room.setName(creationRequest.name());
+        room.setDescription(creationRequest.description());
+        room.setCreator(creator);
+        room.setRoomPictureUrl(creationRequest.roomPictureUrl());
+        this.addRoomEntity(room);
         
         Membership membership = new Membership();
         membership.setUser(creator);
@@ -87,6 +87,7 @@ public class RoomService {
         membershipService.addMembershipEntity(membership);
         
         RoomChat chat = new RoomChat();
+        chat.setOwner(creator);
         chat.setRoom(room);
         chatService.save(chat);
 

@@ -8,8 +8,7 @@ public record MeetingInfoResponse(
     Integer meetingId,
     String title,
     String description,
-    String creatorFirstName,
-    String creatorLastName,
+    UserInfoResponse creatorInfo,
     Instant startsAt
 ) {
 
@@ -18,8 +17,7 @@ public record MeetingInfoResponse(
             meeting.getId(),
             meeting.getTitle(),
             meeting.getDescription(),
-            meeting.getCreator().getFirstName(),
-            meeting.getCreator().getLastName(),
+            UserInfoResponse.of(meeting.getCreator()),
             meeting.getStartsAt()
         );
     }
