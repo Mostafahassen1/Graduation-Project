@@ -1,5 +1,6 @@
 package com.codemeet.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 @Entity
@@ -17,7 +18,10 @@ public class Participant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
+
+    @Column(nullable = false)
+    private boolean isParticipated;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private User user;
@@ -56,5 +60,13 @@ public class Participant {
     
     public void setMeeting(Meeting meeting) {
         this.meeting = meeting;
+    }
+
+    public boolean isParticipated() {
+        return isParticipated;
+    }
+
+    public void setParticipated(boolean participated) {
+        isParticipated = participated;
     }
 }
