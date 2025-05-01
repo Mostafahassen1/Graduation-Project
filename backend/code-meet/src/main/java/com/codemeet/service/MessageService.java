@@ -6,13 +6,14 @@ import com.codemeet.utils.dto.chat.MessageInfoRequest;
 import com.codemeet.utils.dto.chat.MessageInfoResponse;
 import com.codemeet.utils.exception.IllegalActionException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@AllArgsConstructor
 @Service
 public class MessageService {
 
@@ -23,21 +24,7 @@ public class MessageService {
     private final UserService userService;
     private final RoomService roomService;
 
-    public MessageService(
-        MessageRepository messageRepository,
-        MembershipService membershipService,
-        FriendshipService friendshipService,
-        ChatService chatService,
-        UserService userService,
-        RoomService roomService
-    ) {
-        this.messageRepository = messageRepository;
-        this.membershipService = membershipService;
-        this.friendshipService = friendshipService;
-        this.chatService = chatService;
-        this.userService = userService;
-        this.roomService = roomService;
-    }
+
     
     public Message save(Message message) {
         return messageRepository.save(message);
@@ -73,10 +60,11 @@ public class MessageService {
             List<Message> messages = new ArrayList<>();
             List<RoomChat> roomChats = chatService.getAllRoomChatEntitiesByRoomId(rc.getRoom().getId());
             for (RoomChat rci : roomChats) {
-                Message mi = new Message();
-                mi.setChat(rci);
-                mi.setSender(sender);
-                mi.setContent(messageInfo.content());
+                Message mi = Message.builder()
+                        .chat(rci)
+                        .sender(sender)
+                        .content(messageInfo.content())
+                        .build();
                 messages.add(mi);
             }
             
@@ -107,15 +95,18 @@ public class MessageService {
             PeerChat pc2 = chatService.getPeerChatEntityByOwnerIdAndPeerId(
                 pc1.getPeer().getId(), pc1.getOwner().getId());
             
-            Message m1 = new Message();
-            m1.setChat(pc1);
-            m1.setSender(sender);
-            m1.setContent(messageInfo.content());
+            Message m1 = Message.builder()
+                    .chat(pc1)
+                    .sender(sender)
+                    .content(messageInfo.content())
+                    .build();
+
             
-            Message m2 = new Message();
-            m2.setChat(pc2);
-            m2.setSender(sender);
-            m2.setContent(messageInfo.content());
+            Message m2 = Message.builder()
+                    .chat(pc2)
+                    .sender(sender)
+                    .content(messageInfo.content())
+                    .build();
             
             saveAll(List.of(m1, m2));
             

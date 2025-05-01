@@ -7,6 +7,7 @@ import com.codemeet.utils.dto.*;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import com.codemeet.utils.exception.IllegalActionException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -17,6 +18,7 @@ import java.util.*;
 import static com.codemeet.entity.NotificationType.SCHEDULED_MEETING;
 
 @Service
+@AllArgsConstructor
 public class MeetingService {
 
     private final MeetingRepository meetingRepository;
@@ -24,17 +26,7 @@ public class MeetingService {
     private final NotificationService notificationService;
     private final UserService userService;
 
-    public MeetingService(
-        MeetingRepository meetingRepository,
-        ParticipantRepository participantRepository,
-        NotificationService notificationService,
-        UserService userService
-    ) {
-        this.meetingRepository = meetingRepository;
-        this.notificationService = notificationService;
-        this.participantRepository = participantRepository;
-        this.userService = userService;
-    }
+
 
     public Meeting getMeetingEntityById(Integer meetingId) {
         return meetingRepository.findById(meetingId)
@@ -108,13 +100,15 @@ public class MeetingService {
         // Schedule meeting
         User creator = userService.getUserEntityById(scheduledMeetingRequest.creatorId());
 
-        Meeting scheduledMeeting = new Meeting(
-            scheduledMeetingRequest.title(),
-            scheduledMeetingRequest.description(),
-            creator,
-            scheduledMeetingRequest.startsAt(),
-            MeetingStatus.SCHEDULED
-        );
+        Meeting scheduledMeeting =
+                Meeting.builder()
+                        .title(scheduledMeetingRequest.title())
+                        .description(scheduledMeetingRequest.description())
+                        .creator(creator)
+                        .startsAt(scheduledMeetingRequest.startsAt())
+                        .status(MeetingStatus.SCHEDULED)
+                        .build();
+
 
         meetingRepository.save(scheduledMeeting);
 
@@ -166,13 +160,15 @@ public class MeetingService {
         // Create instant meeting
         User creator = userService.getUserEntityById(instantMeetingRequest.creatorId());
 
-        Meeting instantMeeting = new Meeting(
-                instantMeetingRequest.title(),
-                instantMeetingRequest.description(),
-                creator,
-                Instant.now(),
-                MeetingStatus.RUNNING
-        );
+        Meeting instantMeeting =
+                Meeting.builder()
+                        .title(instantMeetingRequest.title())
+                        .description(instantMeetingRequest.description())
+                        .creator(creator)
+                        .startsAt(Instant.now())
+                        .status(MeetingStatus.RUNNING)
+                        .build();
+
 
         meetingRepository.save(instantMeeting);
         participantRepository.save(new Participant(creator, instantMeeting));

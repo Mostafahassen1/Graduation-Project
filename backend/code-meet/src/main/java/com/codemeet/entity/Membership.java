@@ -1,9 +1,14 @@
 package com.codemeet.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
-
+@Getter
+@Setter
+@Builder
 @Entity
 @Table(
     name = "memberships",
@@ -32,42 +37,5 @@ public class Membership {
 
     private Instant joinedAt;
     
-    public Membership() {
-    }
-    
-    public Integer getId() {
-        return id;
-    }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-    
-    public Room getRoom() {
-        return room;
-    }
-    
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-    
-    public MembershipStatus getStatus() {
-        return status;
-    }
-    
-    public void setStatus(MembershipStatus status) {
-        this.status = status;
-    }
-    
-    public Instant getJoinedAt() {
-        return joinedAt;
-    }
-
-    public void setJoinedAt(Instant joinedAt) {
-        this.joinedAt = joinedAt;
-    }
 }

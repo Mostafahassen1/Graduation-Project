@@ -2,7 +2,13 @@ package com.codemeet.entity;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(
     name = "participants",
@@ -35,38 +41,5 @@ public class Participant {
         this.meeting = meeting;
     }
 
-    public Participant() {
-    }
 
-    public Integer getId() {
-        return id;
-    }
-    
-    public void setId(Integer id) {
-        this.id = id;
-    }
-    
-    public User getUser() {
-        return user;
-    }
-    
-    public void setUser(User user) {
-        this.user = user;
-    }
-    
-    public Meeting getMeeting() {
-        return meeting;
-    }
-    
-    public void setMeeting(Meeting meeting) {
-        this.meeting = meeting;
-    }
-
-    public boolean isParticipated() {
-        return isParticipated;
-    }
-
-    public void setParticipated(boolean participated) {
-        isParticipated = participated;
-    }
 }

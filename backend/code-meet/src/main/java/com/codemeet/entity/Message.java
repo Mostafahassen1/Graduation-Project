@@ -2,10 +2,15 @@ package com.codemeet.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
-
+@Getter
+@Setter
+@Builder
 @Entity
 @Table(name = "messages")
 public class Message {
@@ -29,40 +34,7 @@ public class Message {
     @Temporal(TemporalType.TIMESTAMP)
     private Instant sentAt;
     
-    public Message() {
-    }
-    
-    public Integer getId() {
-        return id;
-    }
-    
-    public Chat getChat() {
-        return chat;
-    }
-    
-    public void setChat(Chat chat) {
-        this.chat = chat;
-    }
-    
-    public User getSender() {
-        return sender;
-    }
-    
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
-    
-    public String getContent() {
-        return content;
-    }
-    
-    public void setContent(String content) {
-        this.content = content;
-    }
-    
-    public Instant getSentAt() {
-        return sentAt;
-    }
+
     
     @Override
     public String toString() {

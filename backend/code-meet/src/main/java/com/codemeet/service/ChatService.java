@@ -5,18 +5,17 @@ import com.codemeet.repository.ChatRepository;
 import com.codemeet.utils.dto.chat.PeerChatInfoResponse;
 import com.codemeet.utils.dto.chat.RoomChatInfoResponse;
 import com.codemeet.utils.exception.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ChatService {
     
     private final ChatRepository chatRepository;
-    
-    public ChatService(ChatRepository chatRepository) {
-        this.chatRepository = chatRepository;
-    }
+
     
     public Chat save(Chat chat) {
         return chatRepository.save(chat);

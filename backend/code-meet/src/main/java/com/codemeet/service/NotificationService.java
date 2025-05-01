@@ -3,11 +3,12 @@ package com.codemeet.service;
 import com.codemeet.entity.Notification;
 import com.codemeet.repository.NotificationRepository;
 import com.codemeet.utils.dto.NotificationInfo;
+import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@AllArgsConstructor
 @Service
 public class NotificationService {
     
@@ -16,14 +17,7 @@ public class NotificationService {
     private final SimpMessagingTemplate messagingTemplate;
     private final NotificationRepository notificationRepository;
     
-    public NotificationService(
-        SimpMessagingTemplate messagingTemplate,
-        NotificationRepository notificationRepository
-    ) {
-        this.messagingTemplate = messagingTemplate;
-        this.notificationRepository = notificationRepository;
-    }
-    
+
     public Notification save(Notification notification) {
         return notificationRepository.save(notification);
     }

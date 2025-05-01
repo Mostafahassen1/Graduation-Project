@@ -7,10 +7,11 @@ import com.codemeet.utils.dto.RoomInfoResponse;
 import com.codemeet.utils.dto.RoomUpdateRequest;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@AllArgsConstructor
 @Service
 public class RoomService {
 
@@ -19,21 +20,8 @@ public class RoomService {
     private final MembershipService membershipService;
     private final ChatService chatService;
     
-    public RoomService(
-        RoomRepository roomRepository,
-        UserService userService,
-        MembershipService membershipService,
-        ChatService chatService
-    ) {
-        this.roomRepository = roomRepository;
-        this.userService = userService;
-        this.membershipService = membershipService;
-        this.chatService = chatService;
-    }
-    
-    public boolean exists(int roomId) {
-        return roomRepository.existsById(roomId);
-    }
+
+
     
     public Room getRoomEntityById(int id) {
         return roomRepository.findById(id)
@@ -72,28 +60,31 @@ public class RoomService {
     @Transactional
     public RoomInfoResponse createRoom(RoomCreationRequest creationRequest) {
         User creator = userService.getUserEntityById(creationRequest.creatorId());
-        
-        Room room = new Room();
-        room.setName(creationRequest.name());
-        room.setDescription(creationRequest.description());
-        room.setCreator(creator);
-        room.setRoomPictureUrl(creationRequest.roomPictureUrl());
+
+        Room room = Room.builder()
+                .name(creationRequest.name())
+                .description(creationRequest.description())
+                .creator(creator)
+                .roomPictureUrl(creationRequest.roomPictureUrl())
+                .build();
         this.addRoomEntity(room);
-        
-        Membership membership = new Membership();
-        membership.setUser(creator);
-        membership.setRoom(room);
-        membership.setStatus(MembershipStatus.ADMIN);
+
+        Membership membership = Membership.builder()
+                .user(creator)
+                .room(room)
+                .status(MembershipStatus.ADMIN)
+                .build();
         membershipService.addMembershipEntity(membership);
-        
-        RoomChat chat = new RoomChat();
-        chat.setOwner(creator);
-        chat.setRoom(room);
+
+        RoomChat chat = RoomChat.builder()
+                .owner(creator)
+                .room(room)
+                .build();
         chatService.save(chat);
 
         return RoomInfoResponse.of(room);
     }
-    
+
     @Transactional
     public RoomInfoResponse updateRoom(RoomUpdateRequest updateRequest) {
         Room room = getRoomEntityById(updateRequest.roomId()); // Persisted

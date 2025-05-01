@@ -8,6 +8,7 @@ import com.codemeet.utils.exception.EntityNotFoundException;
 import com.codemeet.utils.exception.IllegalActionException;
 import com.codemeet.utils.exception.ResourceType;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -19,7 +20,6 @@ import java.util.Map;
 
 import static com.codemeet.entity.NotificationType.MEMBERSHIP_ACCEPTED;
 import static com.codemeet.entity.NotificationType.MEMBERSHIP_REQUEST;
-
 @Service
 public class MembershipService {
     
@@ -106,10 +106,12 @@ public class MembershipService {
                     .formatted(user.getId(), room.getId()), ResourceType.MEMBERSHIP);
         }
 
-        Membership membership = new Membership();
-        membership.setUser(user);
-        membership.setRoom(room);
-        membership.setStatus(MembershipStatus.PENDING);
+        Membership membership = Membership.builder()
+                        .user(user)
+                                .room(room)
+                                        .status(MembershipStatus.PENDING)
+                                                .build();
+
         this.addMembershipEntity(membership);
         
         // Send notification to the admin...
@@ -141,9 +143,10 @@ public class MembershipService {
         Membership membership = getMembershipEntity(membershipId);
         membership.setStatus(MembershipStatus.ACCEPTED);
         
-        RoomChat rc = new RoomChat();
-        rc.setOwner(membership.getUser());
-        rc.setRoom(membership.getRoom());
+        RoomChat rc = RoomChat.builder()
+                .owner(membership.getUser())
+                        .room(membership.getRoom())
+                                .build();
         chatService.save(rc);
         
         // Send notification to the requester...

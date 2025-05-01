@@ -6,20 +6,18 @@ import java.util.concurrent.CompletableFuture;
 import com.codemeet.utils.dto.UserInfoResponse;
 import com.codemeet.utils.dto.UserUpdateRequest;
 import com.codemeet.utils.exception.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.codemeet.entity.User;
 import com.codemeet.repository.UserRepository;
-
+@AllArgsConstructor
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
     
     public boolean existsById(int userId) {
         return userRepository.existsById(userId);

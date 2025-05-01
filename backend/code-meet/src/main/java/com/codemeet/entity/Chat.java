@@ -1,9 +1,14 @@
 package com.codemeet.entity;
 
 import jakarta.persistence.*;
-
-@Entity
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+@Getter
+@Setter
+@SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
+@Entity
 @Table(name = "chats")
 public abstract class Chat {
     
@@ -18,27 +23,5 @@ public abstract class Chat {
     @OneToOne
     private Message lastSentMessage;
     
-    public Integer getId() {
-        return id;
-    }
-    
-    public void setId(Integer id) {
-        this.id = id;
-    }
-    
-    public User getOwner() {
-        return owner;
-    }
-    
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-    
-    public Message getLastSentMessage() {
-        return lastSentMessage;
-    }
-    
-    public void setLastSentMessage(Message lastSent) {
-        this.lastSentMessage = lastSent;
-    }
+
 }

@@ -10,6 +10,7 @@ import com.codemeet.utils.exception.EntityNotFoundException;
 import com.codemeet.utils.exception.IllegalActionException;
 import com.codemeet.utils.exception.ResourceType;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -25,6 +26,7 @@ import static com.codemeet.entity.NotificationType.FRIENDSHIP_REQUEST;
 import static com.codemeet.entity.NotificationType.FRIENDSHIP_ACCEPTED;
 
 @Service
+@AllArgsConstructor
 public class FriendshipService {
     
     private final FriendshipRepository friendshipRepository;
@@ -32,17 +34,6 @@ public class FriendshipService {
     private final UserService userService;
     private final ChatService chatService;
 
-    public FriendshipService(
-        FriendshipRepository friendshipRepository,
-        NotificationService notificationService,
-        UserService userService, ChatService chatService
-    ) {
-        this.friendshipRepository = friendshipRepository;
-        this.notificationService = notificationService;
-        this.userService = userService;
-        this.chatService = chatService;
-    }
-    
     public boolean exists(Integer fromId, Integer toId) {
         return friendshipRepository.exists(fromId, toId);
     }
@@ -127,8 +118,11 @@ public class FriendshipService {
 
         User from = userService.getUserEntityById(friendshipRequest.fromId());
         User to = userService.getUserEntityById(friendshipRequest.toId());
-
-        Friendship f = new Friendship(from, to, PENDING);
+        Friendship f=  Friendship.builder()
+                   .from(from)
+                   .to(to)
+                   .status(PENDING)
+                   .build();
         friendshipRepository.save(f);
 
         // Sending notification...
@@ -184,14 +178,15 @@ public class FriendshipService {
             );
             
             // Create a chat between them...
-            PeerChat pc1 = new PeerChat();
-            PeerChat pc2 = new PeerChat();
-            
-            pc1.setOwner(friendship.getFrom());
-            pc1.setPeer(friendship.getTo());
-            
-            pc2.setOwner(friendship.getTo());
-            pc2.setPeer(friendship.getFrom());
+            PeerChat pc1 = PeerChat.builder()
+                    .peer(friendship.getTo())
+                    .owner(friendship.getFrom())
+                    .build();
+            PeerChat pc2 = PeerChat.builder()
+                    .owner(friendship.getTo())
+                    .peer(friendship.getFrom())
+                    .build();
+
             
             chatService.saveAll(List.of(pc1, pc2));
         } else {
