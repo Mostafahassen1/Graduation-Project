@@ -8,6 +8,8 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -32,7 +34,7 @@ public class Message {
     
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Instant sentAt;
+    private LocalDateTime sentAt;
     
 
     

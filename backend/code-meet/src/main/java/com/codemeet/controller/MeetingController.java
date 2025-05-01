@@ -1,22 +1,30 @@
 package com.codemeet.controller;
 
 import com.codemeet.service.MeetingService;
-import com.codemeet.utils.dto.*;
+import com.codemeet.utils.dto.meeting.InstantMeetingRequest;
+import com.codemeet.utils.dto.meeting.MeetingInfoResponse;
+import com.codemeet.utils.dto.meeting.ScheduleMeetingRequest;
+import com.codemeet.utils.dto.participant.ParticipantInfoResponse;
+import com.codemeet.utils.dto.participant.ParticipantRequest;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/meeting")
 public class MeetingController {
 
     private final MeetingService meetingService;
 
-    public MeetingController(MeetingService meetingService) {
-        this.meetingService = meetingService;
+    @PostMapping("/participant/add")
+    public ResponseEntity<ParticipantInfoResponse> joinMeeting(
+          @Valid  @RequestBody ParticipantRequest participantRequest
+    ) {
+        return ResponseEntity.ok(meetingService.joinMeeting(participantRequest));
     }
-
     @GetMapping("/scheduled/{userId}")
     public ResponseEntity<List<MeetingInfoResponse>> getScheduledMeetingsOfUser(
         @PathVariable Integer userId
@@ -40,38 +48,27 @@ public class MeetingController {
 
     @PostMapping("/schedule")
     public ResponseEntity<MeetingInfoResponse> scheduleMeeting(
-        @RequestBody ScheduleMeetingRequest meeting
+      @RequestBody ScheduleMeetingRequest meeting
     ) {
       return ResponseEntity.ok(meetingService.scheduleMeeting(meeting));
     }
 
     @PostMapping("/instant")
     public ResponseEntity<MeetingInfoResponse> instantMeeting(
-        @RequestBody InstantMeetingRequest meeting
+       @Valid @RequestBody InstantMeetingRequest meeting
     ) {
         return ResponseEntity.ok(meetingService.startInstantMeeting(meeting));
     }
 
     @PatchMapping("/close")
     public ResponseEntity<Void> closeMeeting(
-        @RequestBody ParticipantRequest participantRequest
+      @Valid  @RequestBody ParticipantRequest participantRequest
     ) {
         meetingService.closeMeeting(participantRequest);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/participant/add")
-    public ResponseEntity<ParticipantInfoResponse> addParticipant(
-        @RequestBody ParticipantRequest participantRequest
-    ) {
-        return ResponseEntity.ok(meetingService.addParticipantToMeeting(participantRequest));
-    }
 
-    @DeleteMapping("/participant/remove")
-    public ResponseEntity<Void> removeParticipant(
-        @RequestBody ParticipantRequest participantRequest
-    ) {
-        meetingService.removeParticipantFromMeeting(participantRequest);
-        return ResponseEntity.noContent().build();
-    }
+
+
 }

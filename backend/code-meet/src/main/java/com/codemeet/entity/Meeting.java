@@ -1,6 +1,7 @@
 package com.codemeet.entity;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -27,7 +28,10 @@ public class Meeting {
     private User creator;
     
     @Column(nullable = false)
-    private Instant startsAt;
+    private LocalDateTime startsAt;
+
+    @Column(nullable = false)
+    private boolean isInstant;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

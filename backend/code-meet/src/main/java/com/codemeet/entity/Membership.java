@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -35,7 +37,7 @@ public class Membership {
     @Column(nullable = false)
     private MembershipStatus status;
 
-    private Instant joinedAt;
+    private LocalDateTime joinedAt;
     
 
 }

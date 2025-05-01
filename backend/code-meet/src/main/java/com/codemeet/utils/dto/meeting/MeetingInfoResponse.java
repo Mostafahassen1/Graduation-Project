@@ -1,15 +1,17 @@
-package com.codemeet.utils.dto;
+package com.codemeet.utils.dto.meeting;
 
 import com.codemeet.entity.Meeting;
+import com.codemeet.utils.dto.user.UserInfoResponse;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record MeetingInfoResponse(
     Integer meetingId,
     String title,
     String description,
     UserInfoResponse creatorInfo,
-    Instant startsAt
+    LocalDateTime startsAt
 ) {
 
     public static MeetingInfoResponse of(Meeting meeting) {

@@ -2,24 +2,17 @@ package com.codemeet.controller;
 
 import com.codemeet.service.ChatService;
 import com.codemeet.service.MessageService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/chat")
 public class ChatController {
     
     private final ChatService chatService;
     private final MessageService messageService;
-    
-    public ChatController(
-        ChatService chatService,
-        MessageService messageService
-    ) {
-        this.chatService = chatService;
-        this.messageService = messageService;
-    }
-    
+
     @GetMapping("/{chatId}")
     public ResponseEntity<?> getChatById(
         @PathVariable Integer chatId,

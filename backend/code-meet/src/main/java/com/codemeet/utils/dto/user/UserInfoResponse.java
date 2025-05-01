@@ -1,4 +1,4 @@
-package com.codemeet.utils.dto;
+package com.codemeet.utils.dto.user;
 
 import com.codemeet.entity.User;
 import jakarta.validation.constraints.NotBlank;

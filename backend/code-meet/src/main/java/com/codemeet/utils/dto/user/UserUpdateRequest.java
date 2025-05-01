@@ -1,11 +1,15 @@
-package com.codemeet.utils.dto;
+package com.codemeet.utils.dto.user;
 
 import org.hibernate.validator.constraints.Length;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
-public record UserSignupRequest(
+public record UserUpdateRequest(
+    @NotNull
+    Integer userId,
+    
     @NotNull
     @NotBlank
     @Length(max = 25)
@@ -19,11 +23,19 @@ public record UserSignupRequest(
     @NotNull
     @NotBlank
     @Length(max = 20)
+    @Pattern(
+        regexp = "",
+        flags = {}
+    )
     String username,
     
     @NotNull
     @NotBlank
     @Length(max = 100) // Minimum length is determined by the pattern
+    @Pattern(
+        regexp = "",
+        flags = {}
+    )
     String email,
     
     @NotNull
@@ -33,13 +45,9 @@ public record UserSignupRequest(
         max = 100
     )
     String password,
-    
-    @NotNull
-    @NotBlank
-    @Length(
-        min = 11,
-        max = 11
-    )
-    String phoneNumber
+      @NotNull
+      String phoneNumber
+        ,
+    String profilePictureUrl
 ) {
 }

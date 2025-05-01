@@ -2,7 +2,7 @@ package com.codemeet.service;
 
 import com.codemeet.entity.Notification;
 import com.codemeet.repository.NotificationRepository;
-import com.codemeet.utils.dto.NotificationInfo;
+import com.codemeet.utils.dto.notification.NotificationInfo;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

@@ -1,24 +1,21 @@
 package com.codemeet.controller;
 
 import com.codemeet.service.RoomService;
-import com.codemeet.utils.dto.RoomCreationRequest;
-import com.codemeet.utils.dto.RoomInfoResponse;
-import com.codemeet.utils.dto.RoomUpdateRequest;
+import com.codemeet.utils.dto.room.RoomCreationRequest;
+import com.codemeet.utils.dto.room.RoomInfoResponse;
+import com.codemeet.utils.dto.room.RoomUpdateRequest;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/room")
 public class RoomController {
     
     private final RoomService roomService;
-    
-    public RoomController(RoomService roomService) {
-        this.roomService = roomService;
-    }
-    
+
     @GetMapping("/{roomId}")
     public ResponseEntity<RoomInfoResponse> getRoomById(@PathVariable int roomId) {
         return ResponseEntity.ok(roomService.getRoomById(roomId));

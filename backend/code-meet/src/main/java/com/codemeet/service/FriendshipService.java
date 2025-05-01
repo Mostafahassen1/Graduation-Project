@@ -2,9 +2,9 @@ package com.codemeet.service;
 
 import com.codemeet.entity.*;
 import com.codemeet.repository.FriendshipRepository;
-import com.codemeet.utils.dto.FriendshipInfoResponse;
-import com.codemeet.utils.dto.FriendshipRequest;
-import com.codemeet.utils.dto.NotificationInfo;
+import com.codemeet.utils.dto.friendship.FriendshipInfoResponse;
+import com.codemeet.utils.dto.friendship.FriendshipRequest;
+import com.codemeet.utils.dto.notification.NotificationInfo;
 import com.codemeet.utils.exception.DuplicateResourceException;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import com.codemeet.utils.exception.IllegalActionException;

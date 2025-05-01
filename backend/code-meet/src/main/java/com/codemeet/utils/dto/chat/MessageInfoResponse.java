@@ -1,11 +1,12 @@
 package com.codemeet.utils.dto.chat;
 
 import com.codemeet.entity.Message;
-import com.codemeet.utils.dto.UserInfoResponse;
+import com.codemeet.utils.dto.user.UserInfoResponse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record MessageInfoResponse(
     @NotNull
@@ -16,7 +17,7 @@ public record MessageInfoResponse(
     String content,
     
     @NotNull
-    Instant sentAt
+    LocalDateTime sentAt
 ) {
     
     public static MessageInfoResponse of(Message message) {

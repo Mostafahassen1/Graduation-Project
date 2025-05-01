@@ -2,13 +2,16 @@ package com.codemeet.service;
 
 import com.codemeet.entity.*;
 import com.codemeet.repository.MembershipRepository;
-import com.codemeet.utils.dto.*;
+import com.codemeet.utils.dto.membership.MembershipInfoResponse;
+import com.codemeet.utils.dto.membership.MembershipRequest;
+import com.codemeet.utils.dto.notification.NotificationInfo;
+import com.codemeet.utils.dto.room.RoomInfoResponse;
+import com.codemeet.utils.dto.user.UserInfoResponse;
 import com.codemeet.utils.exception.DuplicateResourceException;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import com.codemeet.utils.exception.IllegalActionException;
 import com.codemeet.utils.exception.ResourceType;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;

@@ -1,25 +1,22 @@
 package com.codemeet.controller;
 
 import com.codemeet.service.MembershipService;
-import com.codemeet.utils.dto.MembershipInfoResponse;
-import com.codemeet.utils.dto.MembershipRequest;
-import com.codemeet.utils.dto.RoomInfoResponse;
-import com.codemeet.utils.dto.UserInfoResponse;
+import com.codemeet.utils.dto.membership.MembershipInfoResponse;
+import com.codemeet.utils.dto.membership.MembershipRequest;
+import com.codemeet.utils.dto.room.RoomInfoResponse;
+import com.codemeet.utils.dto.user.UserInfoResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/membership")
 public class MembershipController {
     
     private final MembershipService membershipService;
-    
-    public MembershipController(MembershipService membershipService) {
-        this.membershipService = membershipService;
-    }
-    
+
     @GetMapping("/room/{roomId}/user/all")
     public ResponseEntity<List<UserInfoResponse>> getAllUsersOfRoom(
         @PathVariable int roomId

@@ -1,15 +1,16 @@
-package com.codemeet.utils.dto;
+package com.codemeet.utils.dto.room;
 
 import com.codemeet.entity.Room;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record RoomInfoResponse(
     Integer roomId,
     String roomName,
     String roomDescription,
     Integer creatorId,
-    Instant createdAt,
+    LocalDateTime createdAt,
     String roomPictureUrl
 ) {
     

@@ -1,7 +1,7 @@
 package com.codemeet.utils.dto.chat;
 
 import com.codemeet.entity.RoomChat;
-import com.codemeet.utils.dto.RoomInfoResponse;
+import com.codemeet.utils.dto.room.RoomInfoResponse;
 import jakarta.validation.constraints.NotNull;
 
 public record RoomChatInfoResponse(

@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Map;
 @Getter
 @Entity
@@ -34,7 +35,7 @@ public class Notification {
     
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Instant sentAt;
+    private LocalDateTime sentAt;
     
 
 }

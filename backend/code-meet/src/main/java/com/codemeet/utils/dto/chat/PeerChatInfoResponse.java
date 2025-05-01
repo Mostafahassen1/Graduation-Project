@@ -1,7 +1,7 @@
 package com.codemeet.utils.dto.chat;
 
 import com.codemeet.entity.PeerChat;
-import com.codemeet.utils.dto.UserInfoResponse;
+import com.codemeet.utils.dto.user.UserInfoResponse;
 import jakarta.validation.constraints.NotNull;
 
 public record PeerChatInfoResponse(

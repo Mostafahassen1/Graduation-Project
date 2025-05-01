@@ -1,4 +1,4 @@
-package com.codemeet.utils.dto;
+package com.codemeet.utils.dto.meeting;
 
 import com.codemeet.utils.annotation.FutureTime;
 import jakarta.validation.constraints.NotBlank;
@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public record ScheduleMeetingRequest(
@@ -23,7 +24,7 @@ public record ScheduleMeetingRequest(
 
     @NotNull
     @FutureTime
-    Instant startsAt,
+    LocalDateTime startsAt,
 
     @NotEmpty
     Set<@NotNull @NotBlank String> participants

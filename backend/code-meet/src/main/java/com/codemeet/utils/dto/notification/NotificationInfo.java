@@ -1,4 +1,4 @@
-package com.codemeet.utils.dto;
+package com.codemeet.utils.dto.notification;
 
 import com.codemeet.entity.NotificationType;
 

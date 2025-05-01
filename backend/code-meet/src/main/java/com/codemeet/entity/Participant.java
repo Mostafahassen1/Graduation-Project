@@ -2,13 +2,11 @@ package com.codemeet.entity;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(
     name = "participants",
@@ -36,10 +34,7 @@ public class Participant {
     @JoinColumn(nullable = false)
     private Meeting meeting;
 
-    public Participant(User user, Meeting meeting) {
-        this.user = user;
-        this.meeting = meeting;
-    }
+
 
 
 }

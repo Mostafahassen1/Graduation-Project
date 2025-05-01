@@ -1,4 +1,4 @@
-package com.codemeet.utils.dto;
+package com.codemeet.utils.dto.membership;
 
 import com.codemeet.entity.Membership;
 import com.codemeet.entity.MembershipStatus;

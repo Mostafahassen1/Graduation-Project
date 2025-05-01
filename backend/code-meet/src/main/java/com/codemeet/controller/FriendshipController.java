@@ -1,22 +1,20 @@
 package com.codemeet.controller;
 
 import com.codemeet.service.FriendshipService;
-import com.codemeet.utils.dto.FriendshipInfoResponse;
-import com.codemeet.utils.dto.FriendshipRequest;
+import com.codemeet.utils.dto.friendship.FriendshipInfoResponse;
+import com.codemeet.utils.dto.friendship.FriendshipRequest;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/friendship")
 public class FriendshipController {
 
     private final FriendshipService friendshipService;
 
-    public FriendshipController(FriendshipService friendshipService) {
-        this.friendshipService = friendshipService;
-    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<List<FriendshipInfoResponse>> getAllFriendships(

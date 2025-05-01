@@ -2,22 +2,20 @@ package com.codemeet.controller;
 
 import java.util.List;
 
-import com.codemeet.utils.dto.UserUpdateRequest;
+import com.codemeet.utils.dto.user.UserUpdateRequest;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.codemeet.service.UserService;
-import com.codemeet.utils.dto.UserInfoResponse;
-
+import com.codemeet.utils.dto.user.UserInfoResponse;
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("/all")
     public ResponseEntity<List<UserInfoResponse>> getAllUsers() {

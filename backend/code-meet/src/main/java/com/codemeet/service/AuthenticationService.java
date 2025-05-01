@@ -1,9 +1,9 @@
 package com.codemeet.service;
 
 import com.codemeet.entity.User;
-import com.codemeet.utils.dto.UserInfoResponse;
-import com.codemeet.utils.dto.UserLoginRequest;
-import com.codemeet.utils.dto.UserSignupRequest;
+import com.codemeet.utils.dto.user.UserInfoResponse;
+import com.codemeet.utils.dto.user.UserLoginRequest;
+import com.codemeet.utils.dto.user.UserSignupRequest;
 import com.codemeet.utils.exception.AuthenticationException;
 import com.codemeet.utils.exception.DuplicateResourceException;
 import com.codemeet.utils.exception.ResourceType;

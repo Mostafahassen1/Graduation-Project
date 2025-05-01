@@ -2,9 +2,9 @@ package com.codemeet.service;
 
 import com.codemeet.entity.*;
 import com.codemeet.repository.RoomRepository;
-import com.codemeet.utils.dto.RoomCreationRequest;
-import com.codemeet.utils.dto.RoomInfoResponse;
-import com.codemeet.utils.dto.RoomUpdateRequest;
+import com.codemeet.utils.dto.room.RoomCreationRequest;
+import com.codemeet.utils.dto.room.RoomInfoResponse;
+import com.codemeet.utils.dto.room.RoomUpdateRequest;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;

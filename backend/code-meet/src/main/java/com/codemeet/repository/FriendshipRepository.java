@@ -1,7 +1,7 @@
 package com.codemeet.repository;
 
 import com.codemeet.entity.Friendship;
-import com.codemeet.utils.dto.FriendshipInfoResponse;
+import com.codemeet.utils.dto.friendship.FriendshipInfoResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

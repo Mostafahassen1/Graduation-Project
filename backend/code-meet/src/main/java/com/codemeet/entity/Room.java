@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -30,7 +32,7 @@ public class Room {
     
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Instant createdAt;
+    private LocalDateTime createdAt;
     
     private String roomPictureUrl;
 

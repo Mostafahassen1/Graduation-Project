@@ -3,8 +3,8 @@ package com.codemeet.service;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import com.codemeet.utils.dto.UserInfoResponse;
-import com.codemeet.utils.dto.UserUpdateRequest;
+import com.codemeet.utils.dto.user.UserInfoResponse;
+import com.codemeet.utils.dto.user.UserUpdateRequest;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;

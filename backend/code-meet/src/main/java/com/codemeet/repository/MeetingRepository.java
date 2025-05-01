@@ -1,10 +1,12 @@
 package com.codemeet.repository;
 
 import com.codemeet.entity.Meeting;
-import com.codemeet.utils.dto.MeetingInfoResponse;
+import com.codemeet.entity.Participant;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -37,4 +39,14 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
         """
     )
     List<Meeting> getAllScheduled(Integer userId);
+
+
+    @Transactional
+    @Query("""
+    select m
+    from Meeting m
+    WHERE m.startsAt BETWEEN :startTimeMinusOneSec AND :startTimePlusOneSec
+""")
+    List<Meeting> findByStartTimeRange(LocalDateTime startTimeMinusOneSec, LocalDateTime startTimePlusOneSec);
+
 }
