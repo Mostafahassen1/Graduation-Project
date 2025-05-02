@@ -31,7 +31,7 @@ public record UserUpdateRequest(
     
     @NotNull
     @NotBlank
-    @Length(max = 100) // Minimum length is determined by the pattern
+    @Length(max = 100) // The pattern determines minimum length
     @Pattern(
         regexp = "",
         flags = {}
@@ -45,9 +45,10 @@ public record UserUpdateRequest(
         max = 100
     )
     String password,
-      @NotNull
-      String phoneNumber
-        ,
+    
+    @NotNull
+    String phoneNumber,
+    
     String profilePictureUrl
 ) {
 }

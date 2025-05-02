@@ -1,16 +1,15 @@
 package com.codemeet.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(
     name = "memberships",
@@ -37,7 +36,7 @@ public class Membership {
     @Column(nullable = false)
     private MembershipStatus status;
 
-    private LocalDateTime joinedAt;
+    private Instant joinedAt;
     
 
 }

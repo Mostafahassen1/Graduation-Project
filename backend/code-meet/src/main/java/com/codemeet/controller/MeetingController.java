@@ -7,12 +7,13 @@ import com.codemeet.utils.dto.meeting.ScheduleMeetingRequest;
 import com.codemeet.utils.dto.participant.ParticipantInfoResponse;
 import com.codemeet.utils.dto.participant.ParticipantRequest;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@AllArgsConstructor
+
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/meeting")
 public class MeetingController {
@@ -21,7 +22,7 @@ public class MeetingController {
 
     @PostMapping("/participant/add")
     public ResponseEntity<ParticipantInfoResponse> joinMeeting(
-          @Valid  @RequestBody ParticipantRequest participantRequest
+        @Valid  @RequestBody ParticipantRequest participantRequest
     ) {
         return ResponseEntity.ok(meetingService.joinMeeting(participantRequest));
     }
@@ -48,27 +49,23 @@ public class MeetingController {
 
     @PostMapping("/schedule")
     public ResponseEntity<MeetingInfoResponse> scheduleMeeting(
-      @RequestBody ScheduleMeetingRequest meeting
+        @RequestBody ScheduleMeetingRequest meeting
     ) {
-      return ResponseEntity.ok(meetingService.scheduleMeeting(meeting));
+        return ResponseEntity.ok(meetingService.scheduleMeeting(meeting));
     }
 
     @PostMapping("/instant")
     public ResponseEntity<MeetingInfoResponse> instantMeeting(
-       @Valid @RequestBody InstantMeetingRequest meeting
+        @Valid @RequestBody InstantMeetingRequest meeting
     ) {
         return ResponseEntity.ok(meetingService.startInstantMeeting(meeting));
     }
 
     @PatchMapping("/close")
-    public ResponseEntity<Void> closeMeeting(
-      @Valid  @RequestBody ParticipantRequest participantRequest
+    public ResponseEntity<Void> finishMeeting(
+        @Valid  @RequestBody ParticipantRequest participantRequest
     ) {
-        meetingService.closeMeeting(participantRequest);
+        meetingService.finishMeeting(participantRequest);
         return ResponseEntity.noContent().build();
     }
-
-
-
-
 }

@@ -17,7 +17,7 @@ public record MessageInfoResponse(
     String content,
     
     @NotNull
-    LocalDateTime sentAt
+    Instant sentAt
 ) {
     
     public static MessageInfoResponse of(Message message) {

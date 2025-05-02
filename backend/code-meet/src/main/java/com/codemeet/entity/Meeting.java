@@ -1,15 +1,15 @@
 package com.codemeet.entity;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "meetings")
 public class Meeting {
@@ -28,14 +28,13 @@ public class Meeting {
     private User creator;
     
     @Column(nullable = false)
-    private LocalDateTime startsAt;
-
+    private Instant startsAt;
+    
     @Column(nullable = false)
     private boolean isInstant;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MeetingStatus status;
-
-
 }
+

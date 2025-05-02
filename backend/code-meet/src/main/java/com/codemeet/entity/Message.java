@@ -2,17 +2,17 @@ package com.codemeet.entity;
 
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "messages")
 public class Message {
@@ -34,18 +34,5 @@ public class Message {
     
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime sentAt;
-    
-
-    
-    @Override
-    public String toString() {
-        return "[%s\t%s (%s)\t%s]"
-            .formatted(
-                sentAt,
-                sender.getFullName(),
-                sender.getUsername(),
-                content
-            );
-    }
+    private Instant sentAt;
 }

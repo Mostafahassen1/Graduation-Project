@@ -43,9 +43,8 @@ public class User {
     private LocalDateTime createdAt;
 
     private String profilePictureUrl;
-
-
+    
     public String getFullName() {
-        return firstName+" "+lastName;
+        return firstName + " " + lastName;
     }
 }

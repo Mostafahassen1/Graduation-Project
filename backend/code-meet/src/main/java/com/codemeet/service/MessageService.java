@@ -23,8 +23,6 @@ public class MessageService {
     private final ChatService chatService;
     private final UserService userService;
     private final RoomService roomService;
-
-
     
     public Message save(Message message) {
         return messageRepository.save(message);
@@ -61,10 +59,10 @@ public class MessageService {
             List<RoomChat> roomChats = chatService.getAllRoomChatEntitiesByRoomId(rc.getRoom().getId());
             for (RoomChat rci : roomChats) {
                 Message mi = Message.builder()
-                        .chat(rci)
-                        .sender(sender)
-                        .content(messageInfo.content())
-                        .build();
+                    .chat(rci)
+                    .sender(sender)
+                    .content(messageInfo.content())
+                    .build();
                 messages.add(mi);
             }
             
@@ -96,17 +94,17 @@ public class MessageService {
                 pc1.getPeer().getId(), pc1.getOwner().getId());
             
             Message m1 = Message.builder()
-                    .chat(pc1)
-                    .sender(sender)
-                    .content(messageInfo.content())
-                    .build();
+                .chat(pc1)
+                .sender(sender)
+                .content(messageInfo.content())
+                .build();
 
             
             Message m2 = Message.builder()
-                    .chat(pc2)
-                    .sender(sender)
-                    .content(messageInfo.content())
-                    .build();
+                .chat(pc2)
+                .sender(sender)
+                .content(messageInfo.content())
+                .build();
             
             saveAll(List.of(m1, m2));
             

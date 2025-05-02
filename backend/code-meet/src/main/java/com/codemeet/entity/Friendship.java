@@ -1,17 +1,23 @@
 package com.codemeet.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Builder
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "friendships",uniqueConstraints = {
-        @UniqueConstraint(name = "FRIENDSHIP_UNIQUE",columnNames = {"from_id","to_id"})
-})
+@Table(
+    name = "friendships",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "FRIENDSHIP_UNIQUE",
+            columnNames = {"from_id", "to_id"}
+        )
+    }
+)
 public class Friendship {
     
     @Id
@@ -29,7 +35,4 @@ public class Friendship {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FriendshipStatus status;
-    
-
-
 }

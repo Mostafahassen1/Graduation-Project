@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 public record ScheduleMeetingRequest(
@@ -24,7 +23,7 @@ public record ScheduleMeetingRequest(
 
     @NotNull
     @FutureTime
-    LocalDateTime startsAt,
+    Instant startsAt,
 
     @NotEmpty
     Set<@NotNull @NotBlank String> participants

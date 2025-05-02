@@ -1,13 +1,12 @@
 package com.codemeet.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Map;
+
 @Getter
 @Entity
 @Table(name = "notifications")
@@ -35,7 +34,5 @@ public class Notification {
     
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime sentAt;
-    
-
+    private Instant sentAt;
 }

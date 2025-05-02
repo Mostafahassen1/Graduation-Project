@@ -1,14 +1,19 @@
 package com.codemeet.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
 @Getter
 @Setter
 @SuperBuilder
-@Inheritance(strategy = InheritanceType.JOINED)
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "chats")
 public abstract class Chat {
     
@@ -22,6 +27,4 @@ public abstract class Chat {
     
     @OneToOne
     private Message lastSentMessage;
-    
-
 }

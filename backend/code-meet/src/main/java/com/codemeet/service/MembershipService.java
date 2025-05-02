@@ -23,6 +23,7 @@ import java.util.Map;
 
 import static com.codemeet.entity.NotificationType.MEMBERSHIP_ACCEPTED;
 import static com.codemeet.entity.NotificationType.MEMBERSHIP_REQUEST;
+
 @Service
 public class MembershipService {
     
@@ -110,10 +111,10 @@ public class MembershipService {
         }
 
         Membership membership = Membership.builder()
-                        .user(user)
-                                .room(room)
-                                        .status(MembershipStatus.PENDING)
-                                                .build();
+            .user(user)
+            .room(room)
+            .status(MembershipStatus.PENDING)
+            .build();
 
         this.addMembershipEntity(membership);
         
@@ -147,9 +148,10 @@ public class MembershipService {
         membership.setStatus(MembershipStatus.ACCEPTED);
         
         RoomChat rc = RoomChat.builder()
-                .owner(membership.getUser())
-                        .room(membership.getRoom())
-                                .build();
+            .owner(membership.getUser())
+            .room(membership.getRoom())
+            .build();
+        
         chatService.save(rc);
         
         // Send notification to the requester...

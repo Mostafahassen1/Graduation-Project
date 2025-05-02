@@ -10,7 +10,7 @@ public record RoomInfoResponse(
     String roomName,
     String roomDescription,
     Integer creatorId,
-    LocalDateTime createdAt,
+    Instant createdAt,
     String roomPictureUrl
 ) {
     
