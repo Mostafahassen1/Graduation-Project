@@ -20,12 +20,13 @@ public class MeetingController {
 
     private final MeetingService meetingService;
 
-    @PostMapping("/participant/add")
+    @PostMapping("/join")
     public ResponseEntity<ParticipantInfoResponse> joinMeeting(
-        @Valid  @RequestBody ParticipantRequest participantRequest
+        @Valid @RequestBody ParticipantRequest participantRequest
     ) {
         return ResponseEntity.ok(meetingService.joinMeeting(participantRequest));
     }
+    
     @GetMapping("/scheduled/{userId}")
     public ResponseEntity<List<MeetingInfoResponse>> getScheduledMeetingsOfUser(
         @PathVariable Integer userId
@@ -38,6 +39,14 @@ public class MeetingController {
         @PathVariable Integer userId
     ) {
         return ResponseEntity.ok(meetingService.getAllPreviousMeetings(userId));
+    }
+    
+    @GetMapping("/{meetingId}/user/{userId}")
+    public ResponseEntity<ParticipantInfoResponse> getParticipantOfMeeting(
+        @PathVariable Integer meetingId,
+        @PathVariable Integer userId
+    ) {
+        return ResponseEntity.ok(meetingService.getParticipantByUserIdAndMeetingId(meetingId, userId));
     }
 
     @GetMapping("/{meetingId}/participant/all")
@@ -61,9 +70,9 @@ public class MeetingController {
         return ResponseEntity.ok(meetingService.startInstantMeeting(meeting));
     }
 
-    @PatchMapping("/close")
+    @PatchMapping("/finish")
     public ResponseEntity<Void> finishMeeting(
-        @Valid  @RequestBody ParticipantRequest participantRequest
+        @Valid @RequestBody ParticipantRequest participantRequest
     ) {
         meetingService.finishMeeting(participantRequest);
         return ResponseEntity.noContent().build();

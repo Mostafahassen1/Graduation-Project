@@ -2,10 +2,8 @@ package com.codemeet.repository;
 
 import com.codemeet.entity.Participant;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +17,15 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
         """
     )
     Optional<Participant> findByUsernameAndMeetingId(String username, Integer meetingId);
+    
+    @Query(
+        """
+        SELECT p
+        FROM Participant p
+        WHERE p.user.id = :userId AND p.meeting.id = :meetingId
+        """
+    )
+    Optional<Participant> findByUserIdAndMeetingId(Integer userId, Integer meetingId);
 
     @Query(
         """

@@ -59,6 +59,15 @@ public class MeetingService {
                 "Participant with username '%s' and meetingId '%d' not found"
                     .formatted(username, meetingId)));
     }
+    
+    public Participant getParticipantEntityByUserIdAndMeetingId(
+        Integer userId, Integer meetingId
+    ) {
+        return participantRepository.findByUserIdAndMeetingId(userId, meetingId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Participant with userId '%d' and meetingId '%d' not found"
+                    .formatted(userId, meetingId)));
+    }
 
     public List<Participant> getAllParticipantEntitiesByMeetingId(Integer meetingId) {
         getMeetingEntityById(meetingId); // Ensures that this meeting exists
@@ -75,6 +84,20 @@ public class MeetingService {
         return getAllScheduledMeetingEntities(userId).stream()
             .map(MeetingInfoResponse::of)
             .toList();
+    }
+    
+    public ParticipantInfoResponse getParticipantByUsernameAndMeetingId(
+        String username, Integer meetingId
+    ) {
+        return ParticipantInfoResponse.of(
+            getParticipantEntityByUsernameAndMeetingId(username, meetingId));
+    }
+    
+    public ParticipantInfoResponse getParticipantByUserIdAndMeetingId(
+        Integer userId, Integer meetingId
+    ) {
+        return ParticipantInfoResponse.of(
+            getParticipantEntityByUserIdAndMeetingId(userId, meetingId));
     }
 
     public List<ParticipantInfoResponse> getAllParticipantsOfMeeting(Integer meetingId) {
@@ -180,12 +203,11 @@ public class MeetingService {
         } else {
             if (meeting.isInstant()) {
                 User user = userService.getUserEntityByUsername(participantRequest.username());
-                participant = participantRepository.save(
-                    Participant.builder()
-                        .meeting(meeting)
-                        .user(user)
-                        .isParticipated(true)
-                        .build()
+                participant = participantRepository.save(Participant.builder()
+                    .meeting(meeting)
+                    .user(user)
+                    .isParticipated(true)
+                    .build()
                 );
             } else {
                 throw new IllegalActionException("You have no access for that meeting");

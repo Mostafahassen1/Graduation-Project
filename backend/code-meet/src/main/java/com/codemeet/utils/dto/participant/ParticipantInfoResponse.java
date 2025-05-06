@@ -1,6 +1,8 @@
 package com.codemeet.utils.dto.participant;
 
 import com.codemeet.entity.Participant;
+import com.codemeet.utils.dto.meeting.MeetingInfoResponse;
+import com.codemeet.utils.dto.user.UserInfoResponse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -9,31 +11,16 @@ public record ParticipantInfoResponse(
     Integer participantId,
 
     @NotNull
-    @NotBlank
-    String firstName,
+    UserInfoResponse userInfo,
 
-    @NotNull
-    @NotBlank
-    String lastName,
-
-    @NotNull
-    @NotBlank
-    String username,
-
-    @NotNull
-    Integer meetingId,
-
-    String profilePictureUrl
+    MeetingInfoResponse meetingInfo
 ) {
 
     public static ParticipantInfoResponse of(Participant participant) {
         return new ParticipantInfoResponse(
             participant.getId(),
-            participant.getUser().getFirstName(),
-            participant.getUser().getLastName(),
-            participant.getUser().getUsername(),
-            participant.getMeeting().getId(),
-            participant.getUser().getProfilePictureUrl()
+            UserInfoResponse.of(participant.getUser()),
+            MeetingInfoResponse.of(participant.getMeeting())
         );
     }
 }
