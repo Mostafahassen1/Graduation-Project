@@ -78,7 +78,9 @@ public class FriendshipService {
     }
 
     public List<FriendshipInfoResponse> getAllAcceptedFriendships(Integer userId) {
-        return friendshipRepository.getAllFriends(userId);
+        return friendshipRepository.findAllAcceptedByUserId(userId).stream()
+            .map(f -> FriendshipInfoResponse.of(f, userId))
+            .toList();
     }
 
     public List<FriendshipInfoResponse> getAllPendingSentFriendships(Integer userId) {
@@ -94,7 +96,7 @@ public class FriendshipService {
     }
 
     @Transactional
-    public Integer askFriendshipRequest(FriendshipRequest friendshipRequest) {
+    public Integer requestFriendship(FriendshipRequest friendshipRequest) {
         if (friendshipRequest.fromId().equals(friendshipRequest.toId())) {
             throw new IllegalActionException(
                 "User can't send friendship request to himself");
@@ -149,11 +151,12 @@ public class FriendshipService {
     @Transactional
     public void cancelFriendship(Integer friendshipId) {
         Friendship friendship = getFriendshipEntityById(friendshipId);
+        //TODO: We may need to handle something in chats...
         friendshipRepository.delete(friendship);
     }
 
     @Transactional
-    public void acceptFriendshipRequest(Integer friendshipId) {
+    public void acceptFriendship(Integer friendshipId) {
         Friendship friendship = getFriendshipEntityById(friendshipId);
 
         if (friendship.getStatus() == PENDING) {
@@ -178,17 +181,21 @@ public class FriendshipService {
             );
             
             // Create a chat between them...
-            PeerChat pc1 = PeerChat.builder()
+            if (!chatService.peerChatExistsByOwnerIdAndPeerId(
+                friendship.getFrom().getId(), friendship.getTo().getId())) {
+                chatService.save(PeerChat.builder()
                     .peer(friendship.getTo())
                     .owner(friendship.getFrom())
-                    .build();
-            PeerChat pc2 = PeerChat.builder()
+                    .build());
+            }
+            
+            if (!chatService.peerChatExistsByOwnerIdAndPeerId(
+                friendship.getTo().getId(), friendship.getFrom().getId())) {
+                chatService.save(PeerChat.builder()
                     .owner(friendship.getTo())
                     .peer(friendship.getFrom())
-                    .build();
-
-            
-            chatService.saveAll(List.of(pc1, pc2));
+                    .build());
+            }
         } else {
             throw new IllegalActionException(
                 "Friendship status should be PENDING in order to be accepted");

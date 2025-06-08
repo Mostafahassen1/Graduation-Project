@@ -73,4 +73,22 @@ public interface ChatRepository extends JpaRepository<Chat, Integer> {
         """
     )
     List<RoomChat> findAllRoomChatEntitiesByRoomId(Integer roomId);
+    
+    @Query(
+        """
+        SELECT COUNT(pc) > 0
+        FROM PeerChat pc
+        WHERE pc.owner.id = :ownerId AND pc.peer.id = :peerId
+        """
+    )
+    boolean peerChatExistsByOwnerIdAndPeerId(Integer ownerId, Integer peerId);
+    
+    @Query(
+        """
+        SELECT COUNT(rc) > 0
+        FROM RoomChat rc
+        WHERE rc.owner.id = :ownerId AND rc.room.id = :roomId
+        """
+    )
+    boolean roomChatExistsByOwnerIdAndRoomId(Integer ownerId, Integer roomId);
 }

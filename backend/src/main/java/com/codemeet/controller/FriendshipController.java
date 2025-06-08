@@ -45,10 +45,10 @@ public class FriendshipController {
     }
 
     @PostMapping("/request")
-    public ResponseEntity<Integer> askFriendshipRequest(
+    public ResponseEntity<Integer> requestFriendship(
         @RequestBody FriendshipRequest friendshipRequest
     ) {
-        return ResponseEntity.ok(friendshipService.askFriendshipRequest(friendshipRequest));
+        return ResponseEntity.ok(friendshipService.requestFriendship(friendshipRequest));
     }
     
     @DeleteMapping("/cancel/{friendshipId}")
@@ -60,10 +60,10 @@ public class FriendshipController {
     }
 
     @PatchMapping("/accept/{friendshipId}")
-    public ResponseEntity<Void> acceptFriendshipRequest(
+    public ResponseEntity<Void> acceptFriendship(
         @PathVariable Integer friendshipId
     ) {
-        friendshipService.acceptFriendshipRequest(friendshipId);
+        friendshipService.acceptFriendship(friendshipId);
         return ResponseEntity.noContent().build();
     }
 }

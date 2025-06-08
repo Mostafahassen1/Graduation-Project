@@ -15,7 +15,6 @@ import java.util.List;
 public class ChatService {
     
     private final ChatRepository chatRepository;
-
     
     public Chat save(Chat chat) {
         return chatRepository.save(chat);
@@ -73,6 +72,14 @@ public class ChatService {
     
     public List<RoomChat> getAllRoomChatEntitiesByRoomId(Integer roomId) {
         return chatRepository.findAllRoomChatEntitiesByRoomId(roomId);
+    }
+    
+    public boolean peerChatExistsByOwnerIdAndPeerId(Integer ownerId, Integer peerId) {
+        return chatRepository.peerChatExistsByOwnerIdAndPeerId(ownerId, peerId);
+    }
+    
+    public boolean roomChatExistsByOwnerIdAndRoomId(Integer ownerId, Integer roomId) {
+        return chatRepository.roomChatExistsByOwnerIdAndRoomId(ownerId, roomId);
     }
     
     public PeerChatInfoResponse getPeerChatById(Integer chatId) {
