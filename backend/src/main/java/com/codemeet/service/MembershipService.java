@@ -126,8 +126,7 @@ public class MembershipService {
                     Map<String, Object> info = new LinkedHashMap<>();
                     info.put("roomId", membership.getRoom().getId());
                     info.put("roomName", membership.getRoom().getName());
-                    info.put("requesterId", user.getId());
-                    info.put("requesterName", user.getFullName());
+                    info.put("requesterFullName", user.getFullName());
                     info.put("requesterUsername", user.getUsername());
                     
                     // When the client clicks on the notification, it should
