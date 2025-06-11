@@ -33,10 +33,6 @@ public class RoomService {
         return roomRepository.findAllByCreatorId(userId );
     }
     
-    public Room addRoomEntity(Room room) {
-        return roomRepository.save(room);
-    }
-    
     public Room updateRoomEntity(Room room) {
         if (roomRepository.existsById(room.getId())) {
             return roomRepository.save(room);
@@ -62,24 +58,24 @@ public class RoomService {
         User creator = userService.getUserEntityById(creationRequest.creatorId());
 
         Room room = Room.builder()
-                .name(creationRequest.name())
-                .description(creationRequest.description())
-                .creator(creator)
-                .roomPictureUrl(creationRequest.roomPictureUrl())
-                .build();
-        this.addRoomEntity(room);
+            .name(creationRequest.name())
+            .description(creationRequest.description())
+            .creator(creator)
+            .roomPictureUrl(creationRequest.roomPictureUrl())
+            .build();
+        roomRepository.save(room);
 
         Membership membership = Membership.builder()
-                .user(creator)
-                .room(room)
-                .status(MembershipStatus.ADMIN)
-                .build();
+            .user(creator)
+            .room(room)
+            .status(MembershipStatus.ADMIN)
+            .build();
         membershipService.addMembershipEntity(membership);
 
         RoomChat chat = RoomChat.builder()
-                .owner(creator)
-                .room(room)
-                .build();
+            .owner(creator)
+            .room(room)
+            .build();
         chatService.save(chat);
 
         return RoomInfoResponse.of(room);

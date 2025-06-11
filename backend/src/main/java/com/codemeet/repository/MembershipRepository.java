@@ -17,7 +17,7 @@ public interface MembershipRepository extends JpaRepository<Membership, Integer>
         AND (ms.status = "ACCEPTED" OR ms.status = "ADMIN")
         """
     )
-    List<Membership> findAllOfUser(int userId);
+    List<Membership> findAllByUserId(int userId);
     
     @Query(
         """
@@ -26,7 +26,7 @@ public interface MembershipRepository extends JpaRepository<Membership, Integer>
         WHERE ms.room.id = :roomId
         """
     )
-    List<Membership> findAllOfRoom(int roomId);
+    List<Membership> findAllByRoomId(int roomId);
     
     @Query(
         """

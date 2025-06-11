@@ -2,6 +2,7 @@ package com.codemeet.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
@@ -35,8 +36,8 @@ public class Membership {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MembershipStatus status;
-
-    private Instant joinedAt;
     
-
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Instant joinedAt;
 }

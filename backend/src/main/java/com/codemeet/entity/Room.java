@@ -35,6 +35,4 @@ public class Room {
     private Instant createdAt;
     
     private String roomPictureUrl;
-
-
 }

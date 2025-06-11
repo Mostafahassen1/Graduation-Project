@@ -67,35 +67,60 @@ public class MembershipService {
                     .formatted(userId, roomId)));
     }
     
-    public List<Room> getAllRoomEntitiesOfUser(int userId) {
+    public List<Room> getAllRoomEntitiesByUserId(int userId) {
         userService.getUserEntityById(userId);
-        return membershipRepository.findAllOfUser(userId).stream()
+        return membershipRepository.findAllByUserId(userId).stream()
             .map(Membership::getRoom)
             .toList();
     }
     
-    public List<User> getAllUserEntitiesOfRoom(int roomId) {
+    public List<User> getAllUserEntitiesByRoomId(int roomId) {
         roomService.getRoomEntityById(roomId);
-        return membershipRepository.findAllOfRoom(roomId).stream()
+        return membershipRepository.findAllByRoomId(roomId).stream()
             .map(Membership::getUser)
             .toList();
+    }
+    
+    public List<Membership> getAllMembershipEntitiesByRoomId(int roomId) {
+        roomService.getRoomEntityById(roomId);
+        return membershipRepository.findAllByRoomId(roomId);
     }
     
     public Membership addMembershipEntity(Membership membership) {
         return membershipRepository.save(membership);
     }
     
-    public List<RoomInfoResponse> getAllRoomsOfUser(int userId) {
-        List<RoomInfoResponse> rooms = getAllRoomEntitiesOfUser(userId).stream()
+    
+    public List<RoomInfoResponse> getAllRoomsByUserId(int userId) {
+        List<RoomInfoResponse> rooms = getAllRoomEntitiesByUserId(userId).stream()
             .map(RoomInfoResponse::of)
             .toList();
-        System.out.println(rooms);
         return rooms;
     }
     
-    public List<UserInfoResponse> getAllMembersOfRoom(int roomId) {
-        return getAllUserEntitiesOfRoom(roomId).stream()
+    public List<UserInfoResponse> getAllUsersByRoomId(int roomId) {
+        return getAllUserEntitiesByRoomId(roomId).stream()
             .map(UserInfoResponse::of)
+            .toList();
+    }
+    
+    public List<MembershipInfoResponse> getAllMembershipsByRoomId(int roomId) {
+        return getAllMembershipEntitiesByRoomId(roomId).stream()
+            .map(MembershipInfoResponse::of)
+            .toList();
+    }
+    
+    public List<MembershipInfoResponse> getAllAcceptedMembershipsByRoomId(int roomId) {
+        return getAllMembershipEntitiesByRoomId(roomId).stream()
+            .filter(ms -> ms.getStatus() != MembershipStatus.PENDING)
+            .map(MembershipInfoResponse::of)
+            .toList();
+    }
+    
+    public List<MembershipInfoResponse> getAllPendingMembershipsByRoomId(int roomId) {
+        return getAllMembershipEntitiesByRoomId(roomId).stream()
+            .filter(ms -> ms.getStatus() == MembershipStatus.PENDING)
+            .map(MembershipInfoResponse::of)
             .toList();
     }
     

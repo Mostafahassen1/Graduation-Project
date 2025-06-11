@@ -1,15 +1,15 @@
 package com.codemeet.utils.dto.room;
 
 import com.codemeet.entity.Room;
+import com.codemeet.utils.dto.user.UserInfoResponse;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 public record RoomInfoResponse(
     Integer roomId,
     String roomName,
     String roomDescription,
-    Integer creatorId,
+    UserInfoResponse creator,
     Instant createdAt,
     String roomPictureUrl
 ) {
@@ -19,7 +19,7 @@ public record RoomInfoResponse(
             room.getId(),
             room.getName(),
             room.getDescription(),
-            room.getCreator().getId(),
+            UserInfoResponse.of(room.getCreator()),
             room.getCreatedAt(),
             room.getRoomPictureUrl()
         );
