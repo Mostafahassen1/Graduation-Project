@@ -168,10 +168,19 @@ public class MembershipService {
     
     @Transactional
     public void acceptMembership(MembershipRequest joinRequest) {
-        Membership membership = getMembershipEntityByUserIdAndRoomId(
+        accept(getMembershipEntityByUserIdAndRoomId(
             joinRequest.userId(),
             joinRequest.roomId()
-        );
+        ));
+    }
+    
+    @Transactional
+    public void acceptMembership(Integer membershipId) {
+        accept(getMembershipEntityById(membershipId));
+    }
+    
+    @Transactional
+    protected void accept(Membership membership) {
         membership.setStatus(MembershipStatus.ACCEPTED);
         
         if (!chatService.roomChatExistsByOwnerIdAndRoomId(
@@ -206,17 +215,25 @@ public class MembershipService {
     
     @Transactional
     public void cancelMembership(MembershipRequest cancelRequest) {
-        Membership membership = getMembershipEntityByUserIdAndRoomId(
+        cancel(getMembershipEntityByUserIdAndRoomId(
             cancelRequest.userId(),
             cancelRequest.roomId()
-        );
-
+        ));
+    }
+    
+    @Transactional
+    public void cancelMembership(Integer membershipId) {
+        cancel(getMembershipEntityById(membershipId));
+    }
+    
+    @Transactional
+    protected void cancel(Membership membership) {
         if (membership.getStatus() == MembershipStatus.ADMIN) {
             //TODO: A more practical approach must be implemented...
             throw new IllegalActionException(
                 "Admin can't be removed from the room");
         }
-
+        
         membershipRepository.deleteById(membership.getId());
     }
 }

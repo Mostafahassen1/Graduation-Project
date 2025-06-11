@@ -60,11 +60,28 @@ public class MembershipController {
         return ResponseEntity.noContent().build();
     }
     
+    @PatchMapping("/accept/{membershipId}")
+    public ResponseEntity<Void> acceptMembership(
+        @PathVariable Integer membershipId
+    ) {
+        membershipService.acceptMembership(membershipId);
+        System.out.println("Membership accepted...");
+        return ResponseEntity.noContent().build();
+    }
+    
     @DeleteMapping("/cancel")
     public ResponseEntity<Void> cancelMembership(
         @RequestBody MembershipRequest cancelRequest
     ) {
         membershipService.cancelMembership(cancelRequest);
+        return ResponseEntity.noContent().build();
+    }
+    
+    @DeleteMapping("/cancel/{membershipId}")
+    public ResponseEntity<Void> cancelMembership(
+        @PathVariable Integer membershipId
+    ) {
+        membershipService.cancelMembership(membershipId);
         return ResponseEntity.noContent().build();
     }
 }
