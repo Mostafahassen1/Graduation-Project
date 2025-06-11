@@ -1,9 +1,6 @@
 package com.codemeet.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -16,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "room_chats")
 public class RoomChat extends Chat {
     
-    @OneToOne
+    @ManyToOne
     @JoinColumn(nullable = false)
     private Room room;
 }

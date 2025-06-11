@@ -17,14 +17,14 @@ public class MembershipController {
     
     private final MembershipService membershipService;
 
-    @GetMapping("/room/{roomId}/user/all")
-    public ResponseEntity<List<UserInfoResponse>> getAllUsersOfRoom(
+    @GetMapping("/room/{roomId}/members")
+    public ResponseEntity<List<UserInfoResponse>> getAllMembersOfRoom(
         @PathVariable int roomId
     ) {
-        return ResponseEntity.ok(membershipService.getAllUsersOfRoom(roomId));
+        return ResponseEntity.ok(membershipService.getAllMembersOfRoom(roomId));
     }
     
-    @GetMapping("/user/{userId}/room/all")
+    @GetMapping("/user/{userId}/rooms")
     public ResponseEntity<List<RoomInfoResponse>> getAllRoomsOfUser(
         @PathVariable int userId
     ) {
@@ -33,20 +33,24 @@ public class MembershipController {
     
     @PostMapping("/request")
     public ResponseEntity<MembershipInfoResponse> requestMembership(
-        @RequestBody MembershipRequest membershipRequest
+        @RequestBody MembershipRequest joinRequest
     ) {
-        return ResponseEntity.ok(membershipService.requestMembership(membershipRequest));
+        return ResponseEntity.ok(membershipService.requestMembership(joinRequest));
     }
     
-    @PatchMapping("/accept/{membershipId}")
-    public ResponseEntity<Void> acceptMembership(@PathVariable int membershipId) {
-        membershipService.acceptMembership(membershipId);
+    @PatchMapping("/accept")
+    public ResponseEntity<Void> acceptMembership(
+        @RequestBody MembershipRequest joinRequest
+    ) {
+        membershipService.acceptMembership(joinRequest);
         return ResponseEntity.noContent().build();
     }
     
-    @DeleteMapping("/cancel/{membershipId}")
-    public ResponseEntity<Void> cancelMembership(@PathVariable int membershipId) {
-        membershipService.cancelMembership(membershipId);
+    @DeleteMapping("/cancel")
+    public ResponseEntity<Void> cancelMembership(
+        @RequestBody MembershipRequest cancelRequest
+    ) {
+        membershipService.cancelMembership(cancelRequest);
         return ResponseEntity.noContent().build();
     }
 }

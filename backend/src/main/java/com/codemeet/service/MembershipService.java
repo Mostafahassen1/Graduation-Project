@@ -51,14 +51,14 @@ public class MembershipService {
         return membershipRepository.exists(userId, roomId);
     }
     
-    public Membership getMembershipEntity(int membershipId) {
+    public Membership getMembershipEntityById(int membershipId) {
         return membershipRepository.findById(membershipId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Membership with id '%d' not found"
                     .formatted(membershipId)));
     }
     
-    public Membership getMembershipEntity(int userId, int roomId) {
+    public Membership getMembershipEntityByUserIdAndRoomId(int userId, int roomId) {
         userService.getUserEntityById(userId);
         roomService.getRoomEntityById(roomId);
         return membershipRepository.findByUserIdAndRoomId(userId, roomId)
@@ -93,7 +93,7 @@ public class MembershipService {
         return rooms;
     }
     
-    public List<UserInfoResponse> getAllUsersOfRoom(int roomId) {
+    public List<UserInfoResponse> getAllMembersOfRoom(int roomId) {
         return getAllUserEntitiesOfRoom(roomId).stream()
             .map(UserInfoResponse::of)
             .toList();
@@ -142,16 +142,23 @@ public class MembershipService {
     }
     
     @Transactional
-    public void acceptMembership(int membershipId) {
-        Membership membership = getMembershipEntity(membershipId);
+    public void acceptMembership(MembershipRequest joinRequest) {
+        Membership membership = getMembershipEntityByUserIdAndRoomId(
+            joinRequest.userId(),
+            joinRequest.roomId()
+        );
         membership.setStatus(MembershipStatus.ACCEPTED);
         
-        RoomChat rc = RoomChat.builder()
-            .owner(membership.getUser())
-            .room(membership.getRoom())
-            .build();
-        
-        chatService.save(rc);
+        if (!chatService.roomChatExistsByOwnerIdAndRoomId(
+            membership.getUser().getId(), membership.getRoom().getId())
+        ) {
+            RoomChat rc = RoomChat.builder()
+                .owner(membership.getUser())
+                .room(membership.getRoom())
+                .build();
+            
+            chatService.save(rc);
+        }
         
         // Send notification to the requester...
         TransactionSynchronizationManager.registerSynchronization(
@@ -173,14 +180,18 @@ public class MembershipService {
     }
     
     @Transactional
-    public void cancelMembership(int membershipId) {
-        Membership membership = getMembershipEntity(membershipId);
+    public void cancelMembership(MembershipRequest cancelRequest) {
+        Membership membership = getMembershipEntityByUserIdAndRoomId(
+            cancelRequest.userId(),
+            cancelRequest.roomId()
+        );
 
-        if (membership.getStatus().equals(MembershipStatus.ADMIN)) {
+        if (membership.getStatus() == MembershipStatus.ADMIN) {
+            //TODO: A more practical approach must be implemented...
             throw new IllegalActionException(
                 "Admin can't be removed from the room");
         }
 
-        membershipRepository.deleteById(membershipId);
+        membershipRepository.deleteById(membership.getId());
     }
 }

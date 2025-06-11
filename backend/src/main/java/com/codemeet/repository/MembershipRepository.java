@@ -14,6 +14,7 @@ public interface MembershipRepository extends JpaRepository<Membership, Integer>
         SELECT ms
         FROM Membership ms
         WHERE ms.user.id = :userId
+        AND (ms.status = "ACCEPTED" OR ms.status = "ADMIN")
         """
     )
     List<Membership> findAllOfUser(int userId);
