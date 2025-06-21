@@ -1,5 +1,6 @@
 package com.codemeet.utils.dto.user;
 
+import com.codemeet.entity.Gender;
 import org.hibernate.validator.constraints.Length;
 
 import jakarta.validation.constraints.NotBlank;
@@ -40,6 +41,9 @@ public record UserSignupRequest(
         min = 11,
         max = 11
     )
-    String phoneNumber
+    String phoneNumber,
+    
+    @NotNull
+    Gender gender
 ) {
 }

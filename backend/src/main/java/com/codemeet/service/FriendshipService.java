@@ -70,6 +70,15 @@ public class FriendshipService {
         userService.getUserEntityById(userId);
         return friendshipRepository.findAllPendingReceivedByUserId(userId);
     }
+    
+    public FriendshipInfoResponse getFriendshipById(Integer friendshipId) {
+        return FriendshipInfoResponse.of(getFriendshipEntityById(friendshipId), null);
+    }
+    
+    public FriendshipInfoResponse getFriendshipByFromIdAndToId(Integer fromId, Integer toId) {
+        return FriendshipInfoResponse.of(
+            getFriendshipEntityByFromIdAndToId(fromId, toId), fromId);
+    }
 
     public List<FriendshipInfoResponse> getAllFriendships(Integer userId) {
         return getAllFriendshipEntities(userId).stream()
@@ -96,23 +105,23 @@ public class FriendshipService {
     }
 
     @Transactional
-    public Integer requestFriendship(FriendshipRequest friendshipRequest) {
+    public FriendshipInfoResponse requestFriendship(FriendshipRequest friendshipRequest) {
         if (friendshipRequest.fromId().equals(friendshipRequest.toId())) {
             throw new IllegalActionException(
                 "User can't send friendship request to himself");
         }
 
-        Optional<Friendship> of = friendshipRepository.findByFromIdAndToId(
+        Optional<Friendship> ofs = friendshipRepository.findByFromIdAndToId(
             friendshipRequest.fromId(), friendshipRequest.toId()
         );
 
-        if (of.isPresent()) {
+        if (ofs.isPresent()) {
             throw new DuplicateResourceException(
                 "Friendship between user with id '%d' and user with id '%d' already exists (%s)"
                     .formatted(
-                        of.get().getFrom().getId(),
-                        of.get().getTo().getId(),
-                        of.get().getStatus()
+                        ofs.get().getFrom().getId(),
+                        ofs.get().getTo().getId(),
+                        ofs.get().getStatus()
                     ),
                 ResourceType.FRIENDSHIP
             );
@@ -120,12 +129,12 @@ public class FriendshipService {
 
         User from = userService.getUserEntityById(friendshipRequest.fromId());
         User to = userService.getUserEntityById(friendshipRequest.toId());
-        Friendship f=  Friendship.builder()
-                   .from(from)
-                   .to(to)
-                   .status(PENDING)
-                   .build();
-        friendshipRepository.save(f);
+        Friendship fs = Friendship.builder()
+           .from(from)
+           .to(to)
+           .status(PENDING)
+           .build();
+        friendshipRepository.save(fs);
 
         // Sending notification...
         TransactionSynchronizationManager.registerSynchronization(
@@ -145,7 +154,7 @@ public class FriendshipService {
             }
         );
         
-        return f.getId();
+        return FriendshipInfoResponse.of(fs, friendshipRequest.fromId());
     }
 
     @Transactional
@@ -156,11 +165,14 @@ public class FriendshipService {
     }
 
     @Transactional
-    public void acceptFriendship(Integer friendshipId) {
-        Friendship friendship = getFriendshipEntityById(friendshipId);
+    public FriendshipInfoResponse acceptFriendship(FriendshipRequest friendshipRequest) {
+        Friendship fs = getFriendshipEntityByFromIdAndToId(
+            friendshipRequest.fromId(),
+            friendshipRequest.toId()
+        );
 
-        if (friendship.getStatus() == PENDING) {
-            friendship.setStatus(ACCEPTED);
+        if (fs.getStatus() == PENDING) {
+            fs.setStatus(ACCEPTED);
             
             // Send notification...
             TransactionSynchronizationManager.registerSynchronization(
@@ -168,13 +180,13 @@ public class FriendshipService {
                     @Override
                     public void afterCommit() {
                         Map<String, Object> info = new LinkedHashMap<>();
-                        info.put("acceptorUsername", friendship.getTo().getUsername());
-                        info.put("acceptorFullName", friendship.getTo().getFullName());
+                        info.put("acceptorUsername", fs.getTo().getUsername());
+                        info.put("acceptorFullName", fs.getTo().getFullName());
                         
                         // When the client clicks on the notification, it should
                         // be forward to the friend profile.
                         notificationService.sendToUser(new NotificationInfo(
-                            info, friendship.getFrom().getId(), FRIENDSHIP_ACCEPTED
+                            info, fs.getFrom().getId(), FRIENDSHIP_ACCEPTED
                         ));
                     }
                 }
@@ -182,20 +194,22 @@ public class FriendshipService {
             
             // Create a chat between them...
             if (!chatService.peerChatExistsByOwnerIdAndPeerId(
-                friendship.getFrom().getId(), friendship.getTo().getId())) {
+                fs.getFrom().getId(), fs.getTo().getId())) {
                 chatService.save(PeerChat.builder()
-                    .peer(friendship.getTo())
-                    .owner(friendship.getFrom())
+                    .peer(fs.getTo())
+                    .owner(fs.getFrom())
                     .build());
             }
             
             if (!chatService.peerChatExistsByOwnerIdAndPeerId(
-                friendship.getTo().getId(), friendship.getFrom().getId())) {
+                fs.getTo().getId(), fs.getFrom().getId())) {
                 chatService.save(PeerChat.builder()
-                    .owner(friendship.getTo())
-                    .peer(friendship.getFrom())
+                    .owner(fs.getTo())
+                    .peer(fs.getFrom())
                     .build());
             }
+            
+            return FriendshipInfoResponse.of(fs, friendshipRequest.fromId());
         } else {
             throw new IllegalActionException(
                 "Friendship status should be PENDING in order to be accepted");

@@ -8,13 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/friendship")
 public class FriendshipController {
 
     private final FriendshipService friendshipService;
-
 
     @GetMapping("/{userId}")
     public ResponseEntity<List<FriendshipInfoResponse>> getAllFriendships(
@@ -43,9 +43,17 @@ public class FriendshipController {
     ) {
         return ResponseEntity.ok(friendshipService.getAllPendingReceivedFriendships(userId));
     }
+    
+    @GetMapping
+    public ResponseEntity<FriendshipInfoResponse> getFriendship(
+        @RequestParam Integer fromId,
+        @RequestParam Integer toId
+    ) {
+        return ResponseEntity.ok(friendshipService.getFriendshipByFromIdAndToId(fromId, toId));
+    }
 
     @PostMapping("/request")
-    public ResponseEntity<Integer> requestFriendship(
+    public ResponseEntity<FriendshipInfoResponse> requestFriendship(
         @RequestBody FriendshipRequest friendshipRequest
     ) {
         return ResponseEntity.ok(friendshipService.requestFriendship(friendshipRequest));
@@ -59,11 +67,10 @@ public class FriendshipController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/accept/{friendshipId}")
-    public ResponseEntity<Void> acceptFriendship(
-        @PathVariable Integer friendshipId
+    @PatchMapping("/accept")
+    public ResponseEntity<FriendshipInfoResponse> acceptFriendship(
+        @RequestBody FriendshipRequest friendshipRequest
     ) {
-        friendshipService.acceptFriendship(friendshipId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(friendshipService.acceptFriendship(friendshipRequest));
     }
 }

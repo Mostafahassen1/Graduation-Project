@@ -28,6 +28,8 @@ public class User {
     
     @Column(nullable = false, unique = true, length = 20)
     private String username;
+    
+    private String bio;
 
     @Column(nullable = false, unique = true, length = 100)
     private String email;
@@ -37,6 +39,10 @@ public class User {
 
     @Column(nullable = false, length = 11)
     private String phoneNumber;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

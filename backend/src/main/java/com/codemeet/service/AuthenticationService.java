@@ -36,13 +36,14 @@ public class AuthenticationService {
         }
         
         User user = User.builder()
-                .firstName(signupRequest.firstName())
-                .lastName(signupRequest.lastName())
-                .email(signupRequest.email())
-                .username(signupRequest.username())
-                .phoneNumber(signupRequest.phoneNumber())
-                .password(signupRequest.password())
-                .build();
+            .firstName(signupRequest.firstName())
+            .lastName(signupRequest.lastName())
+            .username(signupRequest.username())
+            .email(signupRequest.email())
+            .password(signupRequest.password())
+            .phoneNumber(signupRequest.phoneNumber())
+            .gender(signupRequest.gender())
+            .build();
 
         return UserInfoResponse.of(userService.save(user));
     }

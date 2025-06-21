@@ -1,5 +1,6 @@
 package com.codemeet.utils.dto.user;
 
+import com.codemeet.entity.Gender;
 import com.codemeet.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,6 +30,8 @@ public record UserInfoResponse(
     )
     String username,
     
+    String bio,
+    
     @NotNull
     @NotBlank
     @Length(max = 100) // Minimum length is determined by the pattern
@@ -47,6 +50,9 @@ public record UserInfoResponse(
     )
     String phoneNumber,
     
+    @NotNull
+    Gender gender,
+    
     String profilePictureUrl
 ) {
 
@@ -56,8 +62,10 @@ public record UserInfoResponse(
             user.getFirstName(),
             user.getLastName(),
             user.getUsername(),
+            user.getBio(),
             user.getEmail(),
             user.getPhoneNumber(),
+            user.getGender(),
             user.getProfilePictureUrl()
         );
     }

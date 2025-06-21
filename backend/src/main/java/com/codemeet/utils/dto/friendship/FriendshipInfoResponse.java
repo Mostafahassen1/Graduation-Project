@@ -2,48 +2,31 @@ package com.codemeet.utils.dto.friendship;
 
 import com.codemeet.entity.Friendship;
 import com.codemeet.entity.FriendshipStatus;
-import jakarta.validation.constraints.NotBlank;
+import com.codemeet.utils.dto.user.UserInfoResponse;
 import jakarta.validation.constraints.NotNull;
 
 public record FriendshipInfoResponse(
     @NotNull
     Integer friendshipId,
-
+    
     @NotNull
-    @NotBlank
-    String otherFirstName,
-
+    UserInfoResponse other,
+    
     @NotNull
-    @NotBlank
-    String otherLastName,
-
-    @NotNull
-    @NotBlank
-    String otherUsername,
-
-    String otherProfilePictureUrl,
+    boolean isSent,
 
     @NotNull
     FriendshipStatus status
 ) {
 
     public static FriendshipInfoResponse of(Friendship f, Integer userId) {
-        return f.getFrom().getId().equals(userId) ?
-            new FriendshipInfoResponse(
-                f.getId(),
-                f.getTo().getFirstName(),
-                f.getTo().getLastName(),
-                f.getTo().getUsername(),
-                f.getTo().getProfilePictureUrl(),
-                f.getStatus()
-            ) :
-            new FriendshipInfoResponse(
-                f.getId(),
-                f.getFrom().getFirstName(),
-                f.getFrom().getLastName(),
-                f.getFrom().getUsername(),
-                f.getFrom().getProfilePictureUrl(),
-                f.getStatus()
-            );
+        if (userId == null) userId = f.getFrom().getId();
+        return new FriendshipInfoResponse(
+            f.getId(),
+            UserInfoResponse.of(f.getFrom().getId().equals(userId) ?
+                f.getTo() : f.getFrom()),
+            f.getFrom().getId().equals(userId),
+            f.getStatus()
+        );
     }
 }
