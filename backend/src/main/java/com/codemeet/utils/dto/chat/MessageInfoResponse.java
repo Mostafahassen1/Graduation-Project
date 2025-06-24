@@ -6,11 +6,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 public record MessageInfoResponse(
     @NotNull
-    UserInfoResponse senderInfo,
+    Integer chatId,
+    
+    @NotNull
+    UserInfoResponse sender,
     
     @NotNull
     @NotBlank
@@ -21,7 +23,9 @@ public record MessageInfoResponse(
 ) {
     
     public static MessageInfoResponse of(Message message) {
+        if (message == null) return null;
         return new MessageInfoResponse(
+            message.getChat().getId(),
             UserInfoResponse.of(message.getSender()),
             message.getContent(),
             message.getSentAt()

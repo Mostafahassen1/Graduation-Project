@@ -15,14 +15,9 @@ public class ChatController {
 
     @GetMapping("/{chatId}")
     public ResponseEntity<?> getChatById(
-        @PathVariable Integer chatId,
-        @RequestParam String chatType
+        @PathVariable Integer chatId
     ) {
-        return ResponseEntity.ok(
-            chatType.equals("peer") ?
-                chatService.getPeerChatById(chatId) :
-                chatService.getRoomChatById(chatId)
-        );
+        return ResponseEntity.ok(chatService.getChatById(chatId));
     }
     
     @GetMapping("/{ownerId}/all")

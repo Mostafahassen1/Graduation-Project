@@ -2,6 +2,7 @@ package com.codemeet.service;
 
 import com.codemeet.entity.*;
 import com.codemeet.repository.ChatRepository;
+import com.codemeet.utils.dto.chat.ChatInfoResponse;
 import com.codemeet.utils.dto.chat.PeerChatInfoResponse;
 import com.codemeet.utils.dto.chat.RoomChatInfoResponse;
 import com.codemeet.utils.exception.EntityNotFoundException;
@@ -82,6 +83,10 @@ public class ChatService {
         return chatRepository.roomChatExistsByOwnerIdAndRoomId(ownerId, roomId);
     }
     
+    public ChatInfoResponse getChatById(Integer chatId) {
+        return ChatInfoResponse.of(getChatEntityById(chatId));
+    }
+    
     public PeerChatInfoResponse getPeerChatById(Integer chatId) {
         return PeerChatInfoResponse.of(getPeerChatEntityById(chatId));
     }
@@ -104,15 +109,15 @@ public class ChatService {
             getRoomChatEntityByOwnerIdAndRoomId(ownerId, roomId));
     }
     
-    public List<PeerChatInfoResponse> getAllPeerChatsByOwnerId(Integer ownerId) {
+    public List<ChatInfoResponse> getAllPeerChatsByOwnerId(Integer ownerId) {
         return getAllPeerChatEntitiesByOwnerId(ownerId).stream()
-            .map(PeerChatInfoResponse::of)
+            .map(ChatInfoResponse::of)
             .toList();
     }
     
-    public List<RoomChatInfoResponse> getAllRoomChatsByOwnerId(Integer ownerId) {
+    public List<ChatInfoResponse> getAllRoomChatsByOwnerId(Integer ownerId) {
         return getAllRoomChatEntitiesByOwnerId(ownerId).stream()
-            .map(RoomChatInfoResponse::of)
+            .map(ChatInfoResponse::of)
             .toList();
     }
 }

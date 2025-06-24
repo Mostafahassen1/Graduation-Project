@@ -9,17 +9,16 @@ public record RoomChatInfoResponse(
     Integer chatId,
     
     @NotNull
-    RoomInfoResponse roomInfo,
+    RoomInfoResponse room,
     
-    @NotNull
-    MessageInfoRequest lastSentMessageInfo
+    MessageInfoResponse lastSentMessage
 ) {
     
     public static RoomChatInfoResponse of(RoomChat chat) {
         return new RoomChatInfoResponse(
             chat.getId(),
             RoomInfoResponse.of(chat.getRoom()),
-            MessageInfoRequest.of(chat.getLastSentMessage())
+            MessageInfoResponse.of(chat.getLastSentMessage())
         );
     }
 }
