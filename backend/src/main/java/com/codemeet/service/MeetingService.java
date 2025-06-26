@@ -6,7 +6,7 @@ import com.codemeet.repository.ParticipantRepository;
 import com.codemeet.utils.dto.meeting.InstantMeetingRequest;
 import com.codemeet.utils.dto.meeting.MeetingInfoResponse;
 import com.codemeet.utils.dto.meeting.ScheduleMeetingRequest;
-import com.codemeet.utils.dto.notification.NotificationInfo;
+import com.codemeet.utils.dto.notification.NotificationInfoResponse;
 import com.codemeet.utils.dto.participant.ParticipantInfoResponse;
 import com.codemeet.utils.dto.participant.ParticipantRequest;
 import com.codemeet.utils.dto.user.UserInfoResponse;
@@ -274,7 +274,7 @@ public class MeetingService {
             info.put("creatorInfo", UserInfoResponse.of(scheduledMeeting.getCreator()));
             info.put("startsAt", scheduledMeeting.getStartsAt().toString());
             
-            notificationService.sendToUser(new NotificationInfo(
+            notificationService.sendToUser(new NotificationInfoResponse(
                 info, participant.getUser().getId(), type
             ));
         }

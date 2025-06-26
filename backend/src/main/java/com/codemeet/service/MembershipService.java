@@ -4,7 +4,7 @@ import com.codemeet.entity.*;
 import com.codemeet.repository.MembershipRepository;
 import com.codemeet.utils.dto.membership.MembershipInfoResponse;
 import com.codemeet.utils.dto.membership.MembershipRequest;
-import com.codemeet.utils.dto.notification.NotificationInfo;
+import com.codemeet.utils.dto.notification.NotificationInfoResponse;
 import com.codemeet.utils.dto.room.RoomInfoResponse;
 import com.codemeet.utils.dto.user.UserInfoResponse;
 import com.codemeet.utils.exception.DuplicateResourceException;
@@ -156,7 +156,7 @@ public class MembershipService {
                     
                     // When the client clicks on the notification, it should
                     // be forwarded to room membership requests.
-                    notificationService.sendToUser(new NotificationInfo(
+                    notificationService.sendToUser(new NotificationInfoResponse(
                         info, room.getCreator().getId(), MEMBERSHIP_REQUEST
                     ));
                 }
@@ -205,7 +205,7 @@ public class MembershipService {
                     
                     // When the client clicks on the notification, it should
                     // be forwarded to room view.
-                    notificationService.sendToUser(new NotificationInfo(
+                    notificationService.sendToUser(new NotificationInfoResponse(
                         info, membership.getUser().getId(), MEMBERSHIP_ACCEPTED
                     ));
                 }

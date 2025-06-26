@@ -4,7 +4,7 @@ import com.codemeet.entity.*;
 import com.codemeet.repository.FriendshipRepository;
 import com.codemeet.utils.dto.friendship.FriendshipInfoResponse;
 import com.codemeet.utils.dto.friendship.FriendshipRequest;
-import com.codemeet.utils.dto.notification.NotificationInfo;
+import com.codemeet.utils.dto.notification.NotificationInfoResponse;
 import com.codemeet.utils.exception.DuplicateResourceException;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import com.codemeet.utils.exception.IllegalActionException;
@@ -147,7 +147,7 @@ public class FriendshipService {
                     
                     // When the client clicks on the notification, it should
                     // be forwarded to the friendship requests tab.
-                    notificationService.sendToUser(new NotificationInfo(
+                    notificationService.sendToUser(new NotificationInfoResponse(
                         info, to.getId(), FRIENDSHIP_REQUEST
                     ));
                 }
@@ -185,7 +185,7 @@ public class FriendshipService {
                         
                         // When the client clicks on the notification, it should
                         // be forward to the friend profile.
-                        notificationService.sendToUser(new NotificationInfo(
+                        notificationService.sendToUser(new NotificationInfoResponse(
                             info, fs.getFrom().getId(), FRIENDSHIP_ACCEPTED
                         ));
                     }

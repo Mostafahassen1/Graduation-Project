@@ -4,7 +4,7 @@ import com.codemeet.entity.NotificationType;
 
 import java.util.Map;
 
-public record NotificationInfo(
+public record NotificationInfoResponse(
     Map<String, Object> info,
     
     Integer receiverId,

@@ -11,14 +11,14 @@ public record PeerChatInfoResponse(
     @NotNull
     UserInfoResponse peer,
     
-    MessageInfoResponse lastSentMessage
+    PeerMessageResponse lastSentMessage
 ) {
     
     public static PeerChatInfoResponse of(PeerChat chat) {
         return new PeerChatInfoResponse(
             chat.getId(),
             UserInfoResponse.of(chat.getPeer()),
-            MessageInfoResponse.of(chat.getLastSentMessage())
+            PeerMessageResponse.of(chat.getLastSentMessage())
         );
     }
 }

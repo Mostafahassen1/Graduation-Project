@@ -1,36 +1,49 @@
 package com.codemeet.controller;
 
+import com.codemeet.entity.NotificationType;
 import com.codemeet.service.MessageService;
-import com.codemeet.utils.dto.chat.MessageInfoRequest;
-import com.codemeet.utils.dto.chat.MessageInfoResponse;
-import lombok.AllArgsConstructor;
+import com.codemeet.service.NotificationService;
+import com.codemeet.utils.dto.chat.PeerMessageRequest;
+import com.codemeet.utils.dto.chat.RoomMessageRequest;
+import com.codemeet.utils.dto.notification.NotificationInfoResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-@AllArgsConstructor
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.Map;
+
+@RequiredArgsConstructor
 @Controller
 public class WebSocketController {
     
-    private final SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
+    private final NotificationService notificationService;
     
-
+    @MessageMapping("/peer-chat")
+    public void sendToPeer(@Payload PeerMessageRequest messageRequest) {
+        messageService.saveAndSendToPeer(messageRequest);
+    }
     
-//    @MessageMapping("/peer-chat")
-//    public void sendToPeer(@Payload MessageInfoRequest messageInfoRequest) {
-//        MessageInfoResponse messageInfoResponse =
-//            messageService.save(messageInfoRequest);
-//
-//        String destination = "/chat/" + messageInfoRequest.chatId();
-//        messagingTemplate.convertAndSend(destination, messageInfo);
-//    }
-//
-//    @MessageMapping("/room-chat")
-//    public void sendToRoom(@Payload MessageInfoRequest messageInfo) {
-//        messageInfo = messageService.save(messageInfo);
-//
-//        String destination = "/chat/" + messageInfo.chatId();
-//        messagingTemplate.convertAndSend(destination, messageInfo);
-//    }
+    @MessageMapping("/room-chat")
+    public void sendToRoom(@Payload RoomMessageRequest messageRequest) {
+        messageService.saveAndSendToRoom(messageRequest);
+    }
+    
+    @PostMapping("/test.notification/{userId}")
+    public void testNotification(@PathVariable Integer userId) {
+        System.out.println("Sending notification to: " + userId);
+        notificationService.sendToUser(new NotificationInfoResponse(
+            Map.ofEntries(),
+            userId,
+            NotificationType.TEST
+        ));
+    }
+    
+    @PostMapping("/test.message/{userId}")
+    public void testMessage(@PathVariable Integer userId) {
+        System.out.println("Sending message to: " + userId);
+    }
 }

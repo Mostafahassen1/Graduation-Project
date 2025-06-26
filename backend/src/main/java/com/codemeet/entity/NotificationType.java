@@ -7,6 +7,7 @@ public enum NotificationType {
     MEMBERSHIP_ACCEPTED,
     MEETING_SCHEDULED,
     MEETING_STARTED,
-    MESSAGE_RECEIVED,
+    PEER_MESSAGE,
+    ROOM_MESSAGE,
     TEST
 }
