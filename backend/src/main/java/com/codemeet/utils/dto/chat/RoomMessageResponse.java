@@ -6,6 +6,8 @@ import com.codemeet.utils.dto.user.UserInfoResponse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.Instant;
+
 public record RoomMessageResponse(
     @NotNull
     Integer messageId,
@@ -21,7 +23,10 @@ public record RoomMessageResponse(
     
     @NotNull
     @NotBlank
-    String content
+    String content,
+    
+    @NotNull
+    Instant sentAt
 ) {
     public static RoomMessageResponse of(Message message) {
         return new RoomMessageResponse(
@@ -29,7 +34,8 @@ public record RoomMessageResponse(
             message.getChat().getId(),
             ((RoomChat) message.getChat()).getRoom().getId(),
             UserInfoResponse.of(message.getSender()),
-            message.getContent()
+            message.getContent(),
+            message.getSentAt()
         );
     }
 }

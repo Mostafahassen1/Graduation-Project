@@ -6,6 +6,8 @@ import com.codemeet.utils.dto.user.UserInfoResponse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.Instant;
+
 public record PeerMessageResponse(
     @NotNull
     Integer messageId,
@@ -21,7 +23,10 @@ public record PeerMessageResponse(
     
     @NotNull
     @NotBlank
-    String content
+    String content,
+    
+    @NotNull
+    Instant sentAt
 ) {
     public static PeerMessageResponse of(Message message) {
         if (message == null) return null;
@@ -30,7 +35,8 @@ public record PeerMessageResponse(
             message.getChat().getId(),
             ((PeerChat) message.getChat()).getPeer().getId(),
             UserInfoResponse.of(message.getSender()),
-            message.getContent()
+            message.getContent(),
+            message.getSentAt()
         );
     }
 }
