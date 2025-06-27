@@ -16,4 +16,6 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
         """
     )
     List<Room> findAllByCreatorId(Integer creatorId);
+    
+    List<Room> findByNameContainingIgnoreCase(String query);
 }

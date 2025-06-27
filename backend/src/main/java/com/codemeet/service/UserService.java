@@ -1,23 +1,21 @@
 package com.codemeet.service;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import com.codemeet.utils.dto.user.UserInfoResponse;
 import com.codemeet.utils.dto.user.UserUpdateRequest;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.codemeet.entity.User;
 import com.codemeet.repository.UserRepository;
+
 @AllArgsConstructor
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-
     
     public boolean existsById(int userId) {
         return userRepository.existsById(userId);
@@ -47,9 +45,8 @@ public class UserService {
                     "User with username '%s' not found".formatted(username)));
     }
     
-    @Async
-    public CompletableFuture<List<User>> getAllUserEntities() {
-        return CompletableFuture.completedFuture(userRepository.findAll());
+    public List<User> getAllUserEntities() {
+        return userRepository.findAll();
     }
     
     public User updateUserEntity(User user) {
@@ -61,6 +58,14 @@ public class UserService {
         }
     }
     
+    public List<User> searchForUserEntitiesByUsername(String query) {
+        return userRepository.findByUsernameContaining(query);
+    }
+    
+    public List<User> searchForUserEntitiesByUsernameAndFullName(String query) {
+        return userRepository.findByUsernameContainingOrFullNameContainingIgnoreCase(query);
+    }
+    
     public UserInfoResponse getUserById(int id) {
         return UserInfoResponse.of(getUserEntityById(id));
     }
@@ -70,7 +75,7 @@ public class UserService {
     }
     
     public List<UserInfoResponse> getAllUsers() {
-        return getAllUserEntities().join().stream()
+        return getAllUserEntities().stream()
             .map(UserInfoResponse::of)
             .toList();
     }
@@ -85,5 +90,17 @@ public class UserService {
         user.setPhoneNumber(updateRequest.phoneNumber());
         user.setProfilePictureUrl(updateRequest.profilePictureUrl());
         return UserInfoResponse.of(user);
+    }
+    
+    public List<UserInfoResponse> searchForUsersByUsername(String query) {
+        return searchForUserEntitiesByUsername(query).stream()
+            .map(UserInfoResponse::of)
+            .toList();
+    }
+    
+    public List<UserInfoResponse> searchForUsersByUsernameAndFullName(String query) {
+        return searchForUserEntitiesByUsernameAndFullName(query).stream()
+            .map(UserInfoResponse::of)
+            .toList();
     }
 }

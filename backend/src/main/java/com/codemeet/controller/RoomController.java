@@ -28,6 +28,13 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getAllRoomsByCreator(userId));
     }
     
+    @GetMapping("/search")
+    public ResponseEntity<List<RoomInfoResponse>> searchForRooms(
+        @RequestParam String query
+    ) {
+        return ResponseEntity.ok(roomService.searchForRoomsByName(query));
+    }
+    
     @PostMapping("/create")
     public ResponseEntity<RoomInfoResponse> createRoom(
         @RequestBody RoomCreationRequest creationRequest

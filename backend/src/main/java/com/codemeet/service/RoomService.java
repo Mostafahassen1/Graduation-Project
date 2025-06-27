@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @AllArgsConstructor
 @Service
 public class RoomService {
@@ -19,9 +20,6 @@ public class RoomService {
     private final UserService userService;
     private final MembershipService membershipService;
     private final ChatService chatService;
-    
-
-
     
     public Room getRoomEntityById(int id) {
         return roomRepository.findById(id)
@@ -40,6 +38,10 @@ public class RoomService {
             throw new EntityNotFoundException(
                 "Room with id '%d' not found".formatted(room.getId()));
         }
+    }
+    
+    public List<Room> searchForRoomEntitiesByName(String query) {
+        return roomRepository.findByNameContainingIgnoreCase(query);
     }
     
     public RoomInfoResponse getRoomById(int id) {
@@ -88,5 +90,11 @@ public class RoomService {
         room.setDescription(updateRequest.description());
         room.setRoomPictureUrl(updateRequest.roomPictureUrl());
         return RoomInfoResponse.of(room);
+    }
+    
+    public List<RoomInfoResponse> searchForRoomsByName(String query) {
+        return searchForRoomEntitiesByName(query).stream()
+            .map(RoomInfoResponse::of)
+            .toList();
     }
 }

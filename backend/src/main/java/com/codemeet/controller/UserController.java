@@ -16,10 +16,20 @@ public class UserController {
 
     private final UserService userService;
 
-
     @GetMapping("/all")
     public ResponseEntity<List<UserInfoResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+    
+    @GetMapping("/search")
+    public ResponseEntity<List<UserInfoResponse>> searchForUsers(
+        @RequestParam String query,
+        @RequestParam boolean uno
+    ) {
+        return ResponseEntity.ok(
+            uno ? userService.searchForUsersByUsername(query) :
+                userService.searchForUsersByUsernameAndFullName(query)
+        );
     }
 
     @GetMapping("/{id}")
