@@ -12,8 +12,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
         """
         SELECT n
         FROM Notification n
-        WHERE n.receiver.id = :userId
+        WHERE n.receiver.id = :receiverId
         """
     )
-    List<Notification> getNotifications(Integer userId);
+    List<Notification> findAllByReceiverId(Integer receiverId);
 }

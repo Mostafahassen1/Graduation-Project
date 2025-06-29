@@ -3,7 +3,6 @@ package com.codemeet.service;
 import com.codemeet.entity.*;
 import com.codemeet.repository.MessageRepository;
 import com.codemeet.utils.dto.chat.*;
-import com.codemeet.utils.dto.notification.NotificationInfoResponse;
 import com.codemeet.utils.exception.IllegalActionException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +12,6 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.*;
-
-import static com.codemeet.entity.NotificationType.*;
 
 @RequiredArgsConstructor
 @Service
@@ -90,17 +87,10 @@ public class MessageService {
                         "/peer-chat/" + pc2.getPeer().getId(),
                         PeerMessageResponse.of(m2)
                     );
+                    System.out.println("Sending peer message notification...");
                     
                     // Send notification to the peer...
-                    Map<String, Object> info = new LinkedHashMap<>();
-                    info.put("chatId", pc2.getId());
-                    info.put("senderFirstName", m2.getSender().getFirstName());
-                    info.put("senderLastName", m2.getSender().getLastName());
-                    info.put("senderUsername", m2.getSender().getUsername());
-                    info.put("content", m2.getContent());
-                    notificationService.sendToUser(new NotificationInfoResponse(
-                        info, pc2.getOwner().getId(), PEER_MESSAGE
-                    ));
+                    notificationService.sendPeerMessageNotification(m2);
                 }
             }
         );
@@ -147,20 +137,7 @@ public class MessageService {
                     );
                     
                     // Send notification to all room members...
-                    for (RoomChat rci : roomChats) {
-                        if (rci.getOwner().getId().equals(messages.get(0).getSender().getId())) continue;
-                        
-                        Map<String, Object> info = new LinkedHashMap<>();
-                        info.put("chatId", messages.get(0).getChat().getId());
-                        info.put("roomName", ((RoomChat) messages.get(0).getChat()).getRoom().getName());
-                        info.put("senderFirstName", messages.get(0).getSender().getFirstName());
-                        info.put("senderLastName", messages.get(0).getSender().getLastName());
-                        info.put("senderUsername", messages.get(0).getSender().getUsername());
-                        info.put("content", messages.get(0).getContent());
-                        notificationService.sendToUser(new NotificationInfoResponse(
-                            info, rci.getOwner().getId(), ROOM_MESSAGE
-                        ));
-                    }
+                    notificationService.sendRoomMessageNotification(messages);
                 }
             }
         );

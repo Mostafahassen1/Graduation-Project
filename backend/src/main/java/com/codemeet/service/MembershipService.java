@@ -4,7 +4,6 @@ import com.codemeet.entity.*;
 import com.codemeet.repository.MembershipRepository;
 import com.codemeet.utils.dto.membership.MembershipInfoResponse;
 import com.codemeet.utils.dto.membership.MembershipRequest;
-import com.codemeet.utils.dto.notification.NotificationInfoResponse;
 import com.codemeet.utils.dto.room.RoomInfoResponse;
 import com.codemeet.utils.dto.user.UserInfoResponse;
 import com.codemeet.utils.exception.DuplicateResourceException;
@@ -17,12 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-
-import static com.codemeet.entity.NotificationType.MEMBERSHIP_ACCEPTED;
-import static com.codemeet.entity.NotificationType.MEMBERSHIP_REQUEST;
 
 @Service
 public class MembershipService {
@@ -126,17 +120,17 @@ public class MembershipService {
     
     @Transactional
     public MembershipInfoResponse requestMembership(MembershipRequest joinRequest) {
-        User user = userService.getUserEntityById(joinRequest.userId());
+        User sender = userService.getUserEntityById(joinRequest.userId());
         Room room = roomService.getRoomEntityById(joinRequest.roomId());
 
-        if (this.exists(user.getId(), room.getId())) {
+        if (this.exists(sender.getId(), room.getId())) {
             throw new DuplicateResourceException(
                 "User with id '%d' already exists in room with id '%d'"
-                    .formatted(user.getId(), room.getId()), ResourceType.MEMBERSHIP);
+                    .formatted(sender.getId(), room.getId()), ResourceType.MEMBERSHIP);
         }
 
         Membership membership = Membership.builder()
-            .user(user)
+            .user(sender)
             .room(room)
             .status(MembershipStatus.PENDING)
             .build();
@@ -148,17 +142,9 @@ public class MembershipService {
             new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    Map<String, Object> info = new LinkedHashMap<>();
-                    info.put("roomId", membership.getRoom().getId());
-                    info.put("roomName", membership.getRoom().getName());
-                    info.put("requesterFullName", user.getFullName());
-                    info.put("requesterUsername", user.getUsername());
-                    
                     // When the client clicks on the notification, it should
                     // be forwarded to room membership requests.
-                    notificationService.sendToUser(new NotificationInfoResponse(
-                        info, room.getCreator().getId(), MEMBERSHIP_REQUEST
-                    ));
+                    notificationService.sendMembershipRequestNotification(sender, room, room.getCreator());
                 }
             }
         );
@@ -199,15 +185,9 @@ public class MembershipService {
             new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    Map<String, Object> info = new LinkedHashMap<>();
-                    info.put("roomId", membership.getRoom().getId());
-                    info.put("roomName", membership.getRoom().getName());
-                    
                     // When the client clicks on the notification, it should
                     // be forwarded to room view.
-                    notificationService.sendToUser(new NotificationInfoResponse(
-                        info, membership.getUser().getId(), MEMBERSHIP_ACCEPTED
-                    ));
+                    notificationService.sendMembershipAcceptedNotification(membership.getRoom(), membership.getUser());
                 }
             }
         );

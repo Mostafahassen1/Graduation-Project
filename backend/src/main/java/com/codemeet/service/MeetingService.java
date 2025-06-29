@@ -6,10 +6,8 @@ import com.codemeet.repository.ParticipantRepository;
 import com.codemeet.utils.dto.meeting.InstantMeetingRequest;
 import com.codemeet.utils.dto.meeting.MeetingInfoResponse;
 import com.codemeet.utils.dto.meeting.ScheduleMeetingRequest;
-import com.codemeet.utils.dto.notification.NotificationInfoResponse;
 import com.codemeet.utils.dto.participant.ParticipantInfoResponse;
 import com.codemeet.utils.dto.participant.ParticipantRequest;
-import com.codemeet.utils.dto.user.UserInfoResponse;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import com.codemeet.utils.exception.IllegalActionException;
 import jakarta.transaction.Transactional;
@@ -22,8 +20,6 @@ import java.time.Instant;
 import java.util.*;
 
 import static com.codemeet.entity.MeetingStatus.*;
-import static com.codemeet.entity.NotificationType.MEETING_SCHEDULED;
-import static com.codemeet.entity.NotificationType.MEETING_STARTED;
 
 @Service
 @RequiredArgsConstructor
@@ -149,7 +145,7 @@ public class MeetingService {
             new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    notifyMeetingParticipants(scheduledMeeting, participants, MEETING_SCHEDULED);
+                    notificationService.sendMeetingScheduledNotification(scheduledMeeting, participants);
                     jobSchedulerService.scheduleMeeting(scheduledMeeting);
                 }
             }
@@ -172,7 +168,6 @@ public class MeetingService {
             .status(RUNNING)
             .isInstant(true)
             .build();
-
 
         meetingRepository.save(instantMeeting);
         participantRepository.save(Participant.builder()
@@ -228,7 +223,7 @@ public class MeetingService {
             new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    notifyMeetingParticipants(meeting, participants, MEETING_STARTED);
+                    notificationService.sendMeetingStartedNotification(meeting, participants);
                 }
             }
         );
@@ -257,26 +252,6 @@ public class MeetingService {
             }
         } else {
             throw new IllegalActionException("Only a running meeting can be closed.");
-        }
-    }
-
-
-    private void notifyMeetingParticipants(
-        Meeting scheduledMeeting,
-        List<Participant> participants,
-        NotificationType type
-    ) {
-        for (Participant participant : participants) {
-            Map<String, Object> info = new LinkedHashMap<>();
-            info.put("meetingId", scheduledMeeting.getId());
-            info.put("meetingTitle", scheduledMeeting.getTitle());
-            info.put("meetingDescription", scheduledMeeting.getDescription());
-            info.put("creatorInfo", UserInfoResponse.of(scheduledMeeting.getCreator()));
-            info.put("startsAt", scheduledMeeting.getStartsAt().toString());
-            
-            notificationService.sendToUser(new NotificationInfoResponse(
-                info, participant.getUser().getId(), type
-            ));
         }
     }
 }
