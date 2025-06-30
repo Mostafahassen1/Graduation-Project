@@ -26,9 +26,19 @@ public class NotificationService {
     public Notification save(Notification notification) {
         return notificationRepository.save(notification);
     }
-
-    public List<Notification> getAllNotificationByReceiverId(Integer receiverId) {
+    
+    public void deleteById(Integer notificationId) {
+        notificationRepository.deleteById(notificationId);
+    }
+    
+    public List<Notification> getAllNotificationEntitiesByReceiverId(Integer receiverId) {
         return notificationRepository.findAllByReceiverId(receiverId);
+    }
+
+    public List<NotificationInfoResponse> getAllNotificationsByReceiverId(Integer receiverId) {
+        return getAllNotificationEntitiesByReceiverId(receiverId).stream()
+            .map(NotificationInfoResponse::of)
+            .toList();
     }
     
     public void send(NotificationInfoResponse notification) {

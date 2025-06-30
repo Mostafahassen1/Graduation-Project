@@ -29,6 +29,7 @@ public record RoomMessageResponse(
     Instant sentAt
 ) {
     public static RoomMessageResponse of(Message message) {
+        if (message == null) return null;
         return new RoomMessageResponse(
             message.getId(),
             message.getChat().getId(),
