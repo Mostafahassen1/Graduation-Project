@@ -26,7 +26,7 @@ public class Room {
     @Column(nullable = false)
     private String description;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(nullable = false)
     private User creator;
     

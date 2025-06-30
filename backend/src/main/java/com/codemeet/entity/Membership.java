@@ -27,10 +27,10 @@ public class Membership {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private User user;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Room room;
     
     @Enumerated(EnumType.STRING)

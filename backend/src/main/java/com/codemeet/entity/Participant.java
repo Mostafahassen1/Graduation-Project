@@ -27,11 +27,11 @@ public class Participant {
     @Column(nullable = false)
     private boolean isParticipated;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(nullable = false)
     private User user;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(nullable = false)
     private Meeting meeting;
 }
