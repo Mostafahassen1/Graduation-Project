@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -43,15 +44,15 @@ public class MeetingController {
     
     @GetMapping("/{meetingId}/user/{userId}")
     public ResponseEntity<ParticipantInfoResponse> getParticipantOfMeeting(
-        @PathVariable Integer meetingId,
+        @PathVariable UUID meetingId,
         @PathVariable Integer userId
     ) {
-        return ResponseEntity.ok(meetingService.getParticipantByUserIdAndMeetingId(meetingId, userId));
+        return ResponseEntity.ok(meetingService.getParticipantByUserIdAndMeetingId(userId, meetingId));
     }
 
     @GetMapping("/{meetingId}/participant/all")
     public ResponseEntity<List<ParticipantInfoResponse>> getAllParticipantsOfMeeting(
-        @PathVariable Integer meetingId
+        @PathVariable UUID meetingId
     ) {
         return ResponseEntity.ok(meetingService.getAllParticipantsOfMeeting(meetingId));
     }

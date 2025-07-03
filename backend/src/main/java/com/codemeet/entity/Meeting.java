@@ -1,6 +1,7 @@
 package com.codemeet.entity;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,8 +16,8 @@ import lombok.*;
 public class Meeting {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     
     @Column(nullable = false, length = 50)
     private String title;

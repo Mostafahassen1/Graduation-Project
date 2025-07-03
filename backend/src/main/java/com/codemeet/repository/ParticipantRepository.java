@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
 
@@ -16,7 +17,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
         WHERE p.user.username = :username AND p.meeting.id = :meetingId
         """
     )
-    Optional<Participant> findByUsernameAndMeetingId(String username, Integer meetingId);
+    Optional<Participant> findByUsernameAndMeetingId(String username, UUID meetingId);
     
     @Query(
         """
@@ -25,7 +26,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
         WHERE p.user.id = :userId AND p.meeting.id = :meetingId
         """
     )
-    Optional<Participant> findByUserIdAndMeetingId(Integer userId, Integer meetingId);
+    Optional<Participant> findByUserIdAndMeetingId(Integer userId, UUID meetingId);
 
     @Query(
         """
@@ -34,7 +35,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
         WHERE p.meeting.id = :meetingId
         """
     )
-    List<Participant> findByMeetingId(Integer meetingId);
+    List<Participant> findByMeetingId(UUID meetingId);
 
 
 
@@ -48,5 +49,5 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
         )
         """
     )
-    boolean existsByUsernameAndMeetingId(String username, Integer meetingId);
+    boolean existsByUsernameAndMeetingId(String username, UUID meetingId);
 }

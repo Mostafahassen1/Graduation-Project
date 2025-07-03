@@ -31,10 +31,10 @@ public class MeetingService {
     private final UserService userService;
     private final JobSchedulerService jobSchedulerService;
 
-    public Meeting getMeetingEntityById(Integer meetingId) {
+    public Meeting getMeetingEntityById(UUID meetingId) {
         return meetingRepository.findById(meetingId)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Meeting with id '%d' not found".formatted(meetingId)));
+                "Meeting with id '%s' not found".formatted(meetingId)));
     }
 
     public List<Meeting> getAllPreviousMeetingEntities(Integer userId) {
@@ -48,24 +48,24 @@ public class MeetingService {
     }
 
     public Participant getParticipantEntityByUsernameAndMeetingId(
-            String username, Integer meetingId
+            String username, UUID meetingId
     ) {
         return participantRepository.findByUsernameAndMeetingId(username, meetingId)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Participant with username '%s' and meetingId '%d' not found"
+                "Participant with username '%s' and meetingId '%s' not found"
                     .formatted(username, meetingId)));
     }
     
     public Participant getParticipantEntityByUserIdAndMeetingId(
-        Integer userId, Integer meetingId
+        Integer userId, UUID meetingId
     ) {
         return participantRepository.findByUserIdAndMeetingId(userId, meetingId)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Participant with userId '%d' and meetingId '%d' not found"
+                "Participant with userId '%d' and meetingId '%s' not found"
                     .formatted(userId, meetingId)));
     }
 
-    public List<Participant> getAllParticipantEntitiesByMeetingId(Integer meetingId) {
+    public List<Participant> getAllParticipantEntitiesByMeetingId(UUID meetingId) {
         getMeetingEntityById(meetingId); // Ensures that this meeting exists
         return participantRepository.findByMeetingId(meetingId);
     }
@@ -83,20 +83,20 @@ public class MeetingService {
     }
     
     public ParticipantInfoResponse getParticipantByUsernameAndMeetingId(
-        String username, Integer meetingId
+        String username, UUID meetingId
     ) {
         return ParticipantInfoResponse.of(
             getParticipantEntityByUsernameAndMeetingId(username, meetingId));
     }
     
     public ParticipantInfoResponse getParticipantByUserIdAndMeetingId(
-        Integer userId, Integer meetingId
+        Integer userId, UUID meetingId
     ) {
         return ParticipantInfoResponse.of(
             getParticipantEntityByUserIdAndMeetingId(userId, meetingId));
     }
 
-    public List<ParticipantInfoResponse> getAllParticipantsOfMeeting(Integer meetingId) {
+    public List<ParticipantInfoResponse> getAllParticipantsOfMeeting(UUID meetingId) {
         return getAllParticipantEntitiesByMeetingId(meetingId).stream()
             .map(ParticipantInfoResponse::of)
             .toList();

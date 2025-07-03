@@ -3,6 +3,8 @@ package com.codemeet.utils.dto.participant;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.UUID;
+
 /**
  * This DTO is used as a generic request coming from<br/>
  * a participant. It can be used for:
@@ -20,6 +22,6 @@ public record ParticipantRequest(
     String username,
 
     @NotNull
-    Integer meetingId
+    UUID meetingId
 ) {
 }

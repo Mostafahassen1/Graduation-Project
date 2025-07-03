@@ -4,12 +4,13 @@ import com.codemeet.entity.Meeting;
 import com.codemeet.utils.dto.user.UserInfoResponse;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public record MeetingInfoResponse(
-    Integer meetingId,
+    UUID meetingId,
     String title,
     String description,
-    UserInfoResponse creatorInfo,
+    UserInfoResponse creator,
     Instant startsAt
 ) {
 
