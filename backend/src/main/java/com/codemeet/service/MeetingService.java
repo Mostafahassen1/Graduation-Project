@@ -12,6 +12,7 @@ import com.codemeet.utils.exception.EntityNotFoundException;
 import com.codemeet.utils.exception.IllegalActionException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -28,6 +29,7 @@ public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final ParticipantRepository participantRepository;
     private final NotificationService notificationService;
+    private final SimpMessagingTemplate messagingTemplate;
     private final UserService userService;
     private final JobSchedulerService jobSchedulerService;
 
@@ -45,6 +47,17 @@ public class MeetingService {
     public List<Meeting> getAllScheduledMeetingEntities(Integer userId) {
         userService.getUserEntityById(userId);
         return meetingRepository.getAllScheduled(userId);
+    }
+    
+    public Participant getParticipantEntityById(UUID participantId) {
+        return participantRepository.findById(participantId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Participant with id '%s' not found"
+                    .formatted(participantId)));
+    }
+    
+    public List<Participant> getAllParticipantEntitiesByIds(List<UUID> participantsIds) {
+        return this.participantRepository.findAllById(participantsIds);
     }
 
     public Participant getParticipantEntityByUsernameAndMeetingId(
@@ -67,7 +80,11 @@ public class MeetingService {
 
     public List<Participant> getAllParticipantEntitiesByMeetingId(UUID meetingId) {
         getMeetingEntityById(meetingId); // Ensures that this meeting exists
-        return participantRepository.findByMeetingId(meetingId);
+        return participantRepository.findAllByMeetingId(meetingId);
+    }
+    
+    public MeetingInfoResponse getMeetingById(UUID meetingId) {
+        return MeetingInfoResponse.of(getMeetingEntityById(meetingId));
     }
 
     public List<MeetingInfoResponse> getAllPreviousMeetings(Integer userId) {
@@ -79,6 +96,16 @@ public class MeetingService {
     public List<MeetingInfoResponse> getAllScheduledMeetings(Integer userId) {
         return getAllScheduledMeetingEntities(userId).stream()
             .map(MeetingInfoResponse::of)
+            .toList();
+    }
+    
+    public ParticipantInfoResponse getParticipantById(UUID participantId) {
+        return ParticipantInfoResponse.of(getParticipantEntityById(participantId));
+    }
+    
+    public List<ParticipantInfoResponse> getAllParticipantsByIds(List<UUID> participantsIds) {
+        return getAllParticipantEntitiesByIds(participantsIds).stream()
+            .map(ParticipantInfoResponse::of)
             .toList();
     }
     
@@ -180,36 +207,39 @@ public class MeetingService {
         return MeetingInfoResponse.of(instantMeeting);
     }
 
-    @Transactional
-    public ParticipantInfoResponse joinMeeting(ParticipantRequest participantRequest) {
-        Meeting meeting = getMeetingEntityById(participantRequest.meetingId());
-        Optional<Participant> meetingParticipant =
-            participantRepository.findByUsernameAndMeetingId(
-                participantRequest.username(),
-                participantRequest.meetingId()
+    public void requestJoin(ParticipantRequest participantRequest) {
+        if (!participantRepository.existsByUserIdAndMeetingId(
+            participantRequest.userId(),
+            participantRequest.meetingId()
+        )) {
+            messagingTemplate.convertAndSend(
+                "/request-join/" + participantRequest.meetingId(),
+                participantRequest.userId()
             );
-
-        Participant participant;
-
-        if (meetingParticipant.isPresent()) {
-            participant = meetingParticipant.get();
-            participant.setParticipated(true);
-            participantRepository.save(participant); // Optional: persist the updated flag
-        } else {
-            if (meeting.isInstant()) {
-                User user = userService.getUserEntityByUsername(participantRequest.username());
-                participant = participantRepository.save(Participant.builder()
-                    .meeting(meeting)
-                    .user(user)
-                    .isParticipated(true)
-                    .build()
-                );
-            } else {
-                throw new IllegalActionException("You have no access for that meeting");
-            }
         }
-
-        return ParticipantInfoResponse.of(participant);
+    }
+    
+    @Transactional
+    public void acceptJoin(ParticipantRequest participantRequest) {
+        if (!participantRepository.existsByUserIdAndMeetingId(
+            participantRequest.userId(),
+            participantRequest.meetingId()
+        )) {
+            User user = userService.getUserEntityById(participantRequest.userId());
+            Meeting meeting = getMeetingEntityById(participantRequest.meetingId());
+            
+            Participant participant = Participant.builder()
+                .meeting(meeting)
+                .user(user)
+                .build();
+            
+            participantRepository.save(participant);
+            
+            messagingTemplate.convertAndSend(
+                "/accept-join/" + participantRequest.userId() + "/" + participantRequest.meetingId(),
+                ParticipantInfoResponse.of(participant)
+            );
+        }
     }
 
     @Transactional
@@ -235,9 +265,8 @@ public class MeetingService {
      */
     @Transactional
     public void finishMeeting(ParticipantRequest participantRequest) {
-        Participant participant =
-            getParticipantEntityByUsernameAndMeetingId(
-                participantRequest.username(),
+        Participant participant = getParticipantEntityByUserIdAndMeetingId(
+                participantRequest.userId(),
                 participantRequest.meetingId()
             );
         Meeting meeting = participant.getMeeting();

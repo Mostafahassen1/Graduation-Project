@@ -20,12 +20,12 @@ import java.util.UUID;
 public class MeetingController {
 
     private final MeetingService meetingService;
-
-    @PostMapping("/join")
-    public ResponseEntity<ParticipantInfoResponse> joinMeeting(
-        @Valid @RequestBody ParticipantRequest participantRequest
+    
+    @GetMapping("/{meetingId}")
+    public ResponseEntity<MeetingInfoResponse> getMeetingById(
+        @PathVariable UUID meetingId
     ) {
-        return ResponseEntity.ok(meetingService.joinMeeting(participantRequest));
+        return ResponseEntity.ok(meetingService.getMeetingById(meetingId));
     }
     
     @GetMapping("/scheduled/{userId}")
@@ -50,11 +50,25 @@ public class MeetingController {
         return ResponseEntity.ok(meetingService.getParticipantByUserIdAndMeetingId(userId, meetingId));
     }
 
-    @GetMapping("/{meetingId}/participant/all")
+    @GetMapping("/{meetingId}/participants")
     public ResponseEntity<List<ParticipantInfoResponse>> getAllParticipantsOfMeeting(
         @PathVariable UUID meetingId
     ) {
         return ResponseEntity.ok(meetingService.getAllParticipantsOfMeeting(meetingId));
+    }
+    
+    @GetMapping("/participant/{participantId}")
+    public ResponseEntity<ParticipantInfoResponse> getParticipantById(
+        @PathVariable UUID participantId
+    ) {
+        return ResponseEntity.ok(meetingService.getParticipantById(participantId));
+    }
+    
+    @PostMapping("/participants")
+    public ResponseEntity<List<ParticipantInfoResponse>> getAllParticipants(
+        @RequestBody List<UUID> participantsIds
+    ) {
+        return ResponseEntity.ok(meetingService.getAllParticipantsByIds(participantsIds));
     }
 
     @PostMapping("/schedule")
@@ -69,6 +83,22 @@ public class MeetingController {
         @Valid @RequestBody InstantMeetingRequest meeting
     ) {
         return ResponseEntity.ok(meetingService.startInstantMeeting(meeting));
+    }
+    
+    @PostMapping("/request-join")
+    public ResponseEntity<Void> requestJoin(
+        @Valid @RequestBody ParticipantRequest participantRequest
+    ) {
+        meetingService.requestJoin(participantRequest);
+        return ResponseEntity.noContent().build();
+    }
+    
+    @PostMapping("/accept-join")
+    public ResponseEntity<Void> acceptJoin(
+        @Valid @RequestBody ParticipantRequest participantRequest
+    ) {
+        meetingService.acceptJoin(participantRequest);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/finish")

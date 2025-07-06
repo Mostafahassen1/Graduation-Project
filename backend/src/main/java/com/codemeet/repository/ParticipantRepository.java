@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
+public interface ParticipantRepository extends JpaRepository<Participant, UUID> {
 
     @Query(
         """
@@ -35,10 +35,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
         WHERE p.meeting.id = :meetingId
         """
     )
-    List<Participant> findByMeetingId(UUID meetingId);
-
-
-
+    List<Participant> findAllByMeetingId(UUID meetingId);
 
     @Query(
         """
@@ -50,4 +47,15 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
         """
     )
     boolean existsByUsernameAndMeetingId(String username, UUID meetingId);
+
+    @Query(
+        """
+        SELECT EXISTS (
+            SELECT p
+            FROM Participant p
+            WHERE p.user.id = :userId and p.meeting.id = :meetingId
+        )
+        """
+    )
+    boolean existsByUserIdAndMeetingId(Integer userId, UUID meetingId);
 }

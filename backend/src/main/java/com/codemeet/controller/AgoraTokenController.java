@@ -5,8 +5,6 @@ import io.agora.rtm.RtmTokenBuilder2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/agora")
 public class AgoraTokenController {
@@ -18,29 +16,31 @@ public class AgoraTokenController {
     private String appCertificate;
     
     @GetMapping("/rtm-token")
-    public Map<String, String> getRtmToken(
+    public String getRtmToken(
         @RequestParam String uid,
         @RequestParam String channelName,
         @RequestParam Integer tokenExpire
     ) {
-        return Map.ofEntries(Map.entry("rtmToken", new RtmTokenBuilder2()
+        System.out.println("Generating rtc token for %s and channel name %s".formatted(uid, channelName));
+        return new RtmTokenBuilder2()
             .buildToken(
                 appId,
                 appCertificate,
                 uid,
                 tokenExpire
-            )));
+            );
     }
     
     @GetMapping("/rtc-token")
-    public Map<String, String> getRtcToken(
-        @RequestParam Integer uid,
+    public String getRtcToken(
+        @RequestParam String uid,
         @RequestParam String channelName,
         @RequestParam Integer tokenExpire,
         @RequestParam Integer privilegeExpire
     ) {
-        return Map.ofEntries(Map.entry("rtcToken", new RtcTokenBuilder2()
-            .buildTokenWithUid(
+        System.out.println("Generating rtc token for %s and channel name %s".formatted(uid, channelName));
+        return new RtcTokenBuilder2()
+            .buildTokenWithUserAccount(
                 appId,
                 appCertificate,
                 channelName,
@@ -48,6 +48,6 @@ public class AgoraTokenController {
                 RtcTokenBuilder2.Role.ROLE_PUBLISHER,
                 tokenExpire,
                 privilegeExpire
-            )));
+            );
     }
 }
