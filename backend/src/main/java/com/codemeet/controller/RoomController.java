@@ -5,12 +5,15 @@ import com.codemeet.utils.dto.room.RoomCreationRequest;
 import com.codemeet.utils.dto.room.RoomInfoResponse;
 import com.codemeet.utils.dto.room.RoomUpdateRequest;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-@AllArgsConstructor
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/room")
 public class RoomController {
     
@@ -48,5 +51,13 @@ public class RoomController {
         @RequestBody RoomUpdateRequest updateRequest
     ) {
         return ResponseEntity.ok(roomService.updateRoom(updateRequest));
+    }
+
+    @PostMapping("/update/{roomId}/roomPicture")
+    public ResponseEntity<RoomInfoResponse> updateRoomPicture(
+        @PathVariable Integer roomId,
+        @RequestPart MultipartFile image
+    ) {
+        return ResponseEntity.ok(roomService.updateRoomPicture(roomId, image));
     }
 }

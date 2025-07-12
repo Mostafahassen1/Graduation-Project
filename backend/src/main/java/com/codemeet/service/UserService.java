@@ -2,21 +2,26 @@ package com.codemeet.service;
 
 import java.util.List;
 
+import com.codemeet.utils.FileUploadUtil;
+import com.codemeet.utils.dto.cloudinary.CloudinaryInfoResponse;
 import com.codemeet.utils.dto.user.UserInfoResponse;
 import com.codemeet.utils.dto.user.UserUpdateRequest;
 import com.codemeet.utils.exception.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.codemeet.entity.User;
 import com.codemeet.repository.UserRepository;
+import org.springframework.web.multipart.MultipartFile;
 
 @AllArgsConstructor
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    
+    private final CloudinaryService cloudinary;
+
     public boolean existsById(int userId) {
         return userRepository.existsById(userId);
     }
@@ -79,16 +84,26 @@ public class UserService {
             .map(UserInfoResponse::of)
             .toList();
     }
-    
+
+    @Transactional
     public UserInfoResponse updateUser(UserUpdateRequest updateRequest) {
         User user = getUserEntityById(updateRequest.userId()); // Persisted
         user.setFirstName(updateRequest.firstName());
         user.setLastName(updateRequest.lastName());
         user.setUsername(updateRequest.username());
-        user.setEmail(updateRequest.email());
-        user.setPassword(updateRequest.password());
-        user.setPhoneNumber(updateRequest.phoneNumber());
-        user.setProfilePictureUrl(updateRequest.profilePictureUrl());
+        user.setGender(updateRequest.gender());
+        user.setBio(updateRequest.bio());
+        return UserInfoResponse.of(user);
+    }
+
+    @Transactional
+    public UserInfoResponse updateProfilePicture(Integer userId, MultipartFile image) {
+        User user = getUserEntityById(userId);
+
+        FileUploadUtil.assertAllowed(image, FileUploadUtil.IMAGE_PATTERN);
+        CloudinaryInfoResponse response = cloudinary.updateProfilePicture(image, userId);
+        user.setProfilePictureUrl(response.url());
+
         return UserInfoResponse.of(user);
     }
     

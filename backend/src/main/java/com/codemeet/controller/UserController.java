@@ -1,5 +1,6 @@
 package com.codemeet.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.codemeet.utils.dto.user.UserUpdateRequest;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.codemeet.service.UserService;
 import com.codemeet.utils.dto.user.UserInfoResponse;
+import org.springframework.web.multipart.MultipartFile;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/user")
@@ -49,5 +52,13 @@ public class UserController {
         @RequestBody UserUpdateRequest updateRequest
     ) {
         return ResponseEntity.ok(userService.updateUser(updateRequest));
+    }
+
+    @PostMapping("/update/{userId}/profilePicture")
+    public ResponseEntity<UserInfoResponse> updateProfilePicture(
+        @PathVariable Integer userId,
+        @RequestPart MultipartFile image
+    ) {
+        return ResponseEntity.ok(userService.updateProfilePicture(userId, image));
     }
 }

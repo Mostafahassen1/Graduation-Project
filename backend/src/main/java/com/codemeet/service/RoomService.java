@@ -2,35 +2,39 @@ package com.codemeet.service;
 
 import com.codemeet.entity.*;
 import com.codemeet.repository.RoomRepository;
+import com.codemeet.utils.FileUploadUtil;
+import com.codemeet.utils.dto.cloudinary.CloudinaryInfoResponse;
 import com.codemeet.utils.dto.room.RoomCreationRequest;
 import com.codemeet.utils.dto.room.RoomInfoResponse;
 import com.codemeet.utils.dto.room.RoomUpdateRequest;
 import com.codemeet.utils.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@AllArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class RoomService {
 
     private final RoomRepository roomRepository;
     private final UserService userService;
     private final MembershipService membershipService;
     private final ChatService chatService;
-    
+    private final CloudinaryService cloudinary;
+
     public Room getRoomEntityById(int id) {
         return roomRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Room with id '%d' not found".formatted(id)));
     }
-    
+
     public List<Room> getAllRoomEntities(Integer userId) {
         return roomRepository.findAllByCreatorId(userId );
     }
-    
+
     public Room updateRoomEntity(Room room) {
         if (roomRepository.existsById(room.getId())) {
             return roomRepository.save(room);
@@ -39,16 +43,16 @@ public class RoomService {
                 "Room with id '%d' not found".formatted(room.getId()));
         }
     }
-    
+
     public List<Room> searchForRoomEntitiesByName(String query) {
         return roomRepository.findByNameContainingIgnoreCase(query);
     }
-    
+
     public RoomInfoResponse getRoomById(int id) {
         Room room = getRoomEntityById(id);
         return RoomInfoResponse.of(room);
     }
-    
+
     public List<RoomInfoResponse> getAllRoomsByCreator(Integer userId) {
         return getAllRoomEntities(userId).stream()
             .map(RoomInfoResponse::of)
@@ -91,7 +95,18 @@ public class RoomService {
         room.setRoomPictureUrl(updateRequest.roomPictureUrl());
         return RoomInfoResponse.of(room);
     }
-    
+
+    @Transactional
+    public RoomInfoResponse updateRoomPicture(Integer roomId, MultipartFile image) {
+        Room room = getRoomEntityById(roomId);
+
+        FileUploadUtil.assertAllowed(image, FileUploadUtil.IMAGE_PATTERN);
+        CloudinaryInfoResponse response = cloudinary.updateRoomPicture(image, roomId);
+        room.setRoomPictureUrl(response.url());
+
+        return RoomInfoResponse.of(room);
+    }
+
     public List<RoomInfoResponse> searchForRoomsByName(String query) {
         return searchForRoomEntitiesByName(query).stream()
             .map(RoomInfoResponse::of)
