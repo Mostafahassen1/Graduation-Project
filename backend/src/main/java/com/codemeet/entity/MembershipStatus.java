@@ -1,5 +1,5 @@
 package com.codemeet.entity;
 
 public enum MembershipStatus {
-    PENDING, ACCEPTED, ADMIN
+    PENDING, ACCEPTED, ADMIN, INVITED
 }

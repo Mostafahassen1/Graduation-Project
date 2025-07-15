@@ -137,7 +137,7 @@ public class MessageService {
                     );
                     
                     // Send notification to all room members...
-                    notificationService.sendRoomMessageNotification(messages);
+                    notificationService.sendRoomMessageNotification(messages.stream().filter(m -> !m.getChat().getOwner().getId().equals(rc.getOwner().getId())).toList());
                 }
             }
         );
